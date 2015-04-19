@@ -30,9 +30,7 @@
 #include <string.h>
 #include <getopt.h>
 #include <errno.h>
-#include <libgen.h>
 #include <time.h>
-#include <sys/time.h>
 #include <inttypes.h>
 
 #include <libimobiledevice/libimobiledevice.h>

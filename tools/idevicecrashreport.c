@@ -27,7 +27,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef _MSC_VER
+#define S_IFIFO _S_IFIFO
+#define S_IFBLK 0x3000
+
+#define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
+#define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
+#else
 #include <unistd.h>
+#endif
 #include "common/utils.h"
 
 #include <libimobiledevice/afc.h>

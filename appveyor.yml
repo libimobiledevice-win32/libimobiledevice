@@ -1,0 +1,27 @@
+before_build:
+  - nuget restore
+  # Update version with build number
+  - ps: (Get-Content Resource.rc -Raw) | Foreach-Object {$_ -replace "(?<version>\d[,|\.]\d[,|\.]\d[,|\.])\d", "`${version}$env:APPVEYOR_BUILD_NUMBER" } | Set-Content Resource.rc
+
+build_script:
+  - msbuild libimobiledevice.sln /p:Configuration=Debug /p:Platform=Win32 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+  - msbuild libimobiledevice.sln /p:Configuration=Release /p:Platform=Win32 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+  - msbuild libimobiledevice.sln /p:Configuration=Debug /p:Platform=x64 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+  - msbuild libimobiledevice.sln /p:Configuration=Release /p:Platform=x64 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+
+on_success:
+  - cmd: choco install wget
+  - cmd: wget http://coapp.org/files/CoApp.Tools.Powershell.msi
+  - cmd: start /wait msiexec /qb /i CoApp.Tools.Powershell.msi
+  - ps: .\CreateNuGetPackage.ps1 -Build $ENV:APPVEYOR_BUILD_NUMBER
+  - cmd: appveyor PushArtifact libimobiledevice.1.2.1.%APPVEYOR_BUILD_NUMBER%.nupkg
+  - cmd: appveyor PushArtifact libimobiledevice.symbols.1.2.1.%APPVEYOR_BUILD_NUMBER%.nupkg
+  - cmd: appveyor PushArtifact libimobiledevice.redist.1.2.1.%APPVEYOR_BUILD_NUMBER%.nupkg
+  - cmd: 7z a -tzip "libimobiledevice-1.2.1.%APPVEYOR_BUILD_NUMBER%-windows-x86.zip" .\Win32\Release\*.exe .\Win32\Release\*.dll
+  - cmd: 7z a -tzip "libimobiledevice-1.2.1.%APPVEYOR_BUILD_NUMBER%-windows-x64.zip" .\x64\Release\*.exe .\x64\Release\*.dll
+  - cmd: appveyor PushArtifact libimobiledevice-1.2.1.%APPVEYOR_BUILD_NUMBER%-windows-x86.zip
+  - cmd: appveyor PushArtifact libimobiledevice-1.2.1.%APPVEYOR_BUILD_NUMBER%-windows-x64.zip
+
+nuget:
+  project_feed: true
+  account_feed: true
