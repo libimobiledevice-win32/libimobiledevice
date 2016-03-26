@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file libimobiledevice/lockdown.h
  * @brief Manage device preferences, start services, pairing and activation.
  * \internal
@@ -312,7 +312,7 @@ LIBIMOBILEDEVICE_API_MSC lockdownd_error_t lockdownd_pair(lockdownd_client_t cli
  *  LOCKDOWN_E_PASSWORD_PROTECTED if the device is password protected,
  *  LOCKDOWN_E_INVALID_HOST_ID if the device does not know the caller's host id
  */
-lockdownd_error_t lockdownd_pair_with_options(lockdownd_client_t client, lockdownd_pair_record_t pair_record, plist_t options, plist_t *response);
+LIBIMOBILEDEVICE_API_MSC lockdownd_error_t lockdownd_pair_with_options(lockdownd_client_t client, lockdownd_pair_record_t pair_record, plist_t options, plist_t *response);
 
 /**
  * Validates if the device is paired with the given HostID. If successful the
