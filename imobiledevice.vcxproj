@@ -225,6 +225,7 @@
     <ClCompile Include="src\mobilesync.c" />
     <ClCompile Include="src\mobile_image_mounter.c" />
     <ClCompile Include="src\notification_proxy.c" />
+    <ClCompile Include="src\pinvoke.c" />
     <ClCompile Include="src\property_list_service.c" />
     <ClCompile Include="src\restore.c" />
     <ClCompile Include="src\sbservices.c" />
