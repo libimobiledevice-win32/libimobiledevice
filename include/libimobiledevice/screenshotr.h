@@ -108,6 +108,15 @@ LIBIMOBILEDEVICE_API_MSC screenshotr_error_t screenshotr_client_free(screenshotr
  */
 LIBIMOBILEDEVICE_API_MSC screenshotr_error_t screenshotr_take_screenshot(screenshotr_client_t client, char **imgdata, uint64_t *imgsize);
 
+/**
+ * Frees the memory used by a screen shot
+ *
+ * @param imgdata The screenshot
+ *
+ * @return SCREENSHOTR_E_SUCCESS on success
+ */
+LIBIMOBILEDEVICE_API_MSC screenshotr_error_t screenshotr_screenshot_free(char **imgdata);
+
 #ifdef __cplusplus
 }
 #endif

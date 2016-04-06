@@ -184,7 +184,7 @@ LIBIMOBILEDEVICE_API_MSC debugserver_error_t debugserver_client_set_ack_mode(deb
  * @return DEBUGSERVER_E_SUCCESS on success,
  *  DEBUGSERVER_E_INVALID_ARG when client is NULL
  */
-LIBIMOBILEDEVICE_API_MSC debugserver_error_t debugserver_client_set_argv(debugserver_client_t client, int argc, char* argv[], char** response);
+LIBIMOBILEDEVICE_API_MSC debugserver_error_t debugserver_client_set_argv(debugserver_client_t client, int argc, const char* argv[], char** response);
 
 /**
  * Adds or sets an environment variable.
