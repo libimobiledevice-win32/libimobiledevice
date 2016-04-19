@@ -9,6 +9,11 @@
 #define __BIG_ENDIAN 4321
 #endif
 
+#ifdef WIN32
+// On Windows, always assume Little Endian.
+#define __BYTE_ORDER __LITTLE_ENDIAN
+#endif
+
 #ifndef __BYTE_ORDER
 #ifdef __LITTLE_ENDIAN__
 #define __BYTE_ORDER __LITTLE_ENDIAN
