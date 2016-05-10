@@ -259,7 +259,7 @@ LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_connection_disable_ssl(idevice_
  *
  * @return IDEVICE_E_SUCCESS if ok, otherwise an error code.
  */
-idevice_error_t idevice_connection_get_fd(idevice_connection_t connection, int *fd);
+LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_connection_get_fd(idevice_connection_t connection, int *fd);
 
 /* misc */
 
