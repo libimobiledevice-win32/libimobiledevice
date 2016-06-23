@@ -28,6 +28,9 @@
 #include <errno.h>
 #include <signal.h>
 #include <stdlib.h>
+#ifndef _MSC_VER
+#include <unistd.h>
+#endif
 
 #ifdef WIN32
 #include <windows.h>

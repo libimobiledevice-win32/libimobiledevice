@@ -30,10 +30,11 @@
 // Other compilers don't care.
 // In the .c files, we use the LIBIMOBILEDEVICE_API definition which depends on 
 // other definitions from config.h. We can't reference config.h from public headers.
+// See https://gcc.gnu.org/wiki/Visibility for some details on this syntax
 #ifdef _MSC_VER
 #define LIBIMOBILEDEVICE_API_MSC __declspec( dllexport )
 #else 
-#define LIBIMOBILEDEVICE_API_MSC
+#define LIBIMOBILEDEVICE_API_MSC __attribute__ ((visibility ("default"))) 
 #endif
 
 #ifdef __cplusplus

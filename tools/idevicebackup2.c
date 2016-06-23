@@ -33,6 +33,9 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <signal.h>
+#ifndef _MSC_VER
+#include <unistd.h>
+#endif
 #include <dirent.h>
 #include <libgen.h>
 #include <ctype.h>
