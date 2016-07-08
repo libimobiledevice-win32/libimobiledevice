@@ -23,6 +23,10 @@
 #include <config.h>
 #endif
 
+#ifdef _MSC_VER
+#include <config_msvc.h>
+#endif
+
 #include <stdlib.h>
 #define _GNU_SOURCE 1
 #define __USE_GNU 1

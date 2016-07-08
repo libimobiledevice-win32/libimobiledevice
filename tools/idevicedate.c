@@ -23,6 +23,10 @@
 #include <config.h>
 #endif
 
+#ifdef _MSC_VER
+#include <config_msvc.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

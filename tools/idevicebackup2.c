@@ -24,6 +24,10 @@
 #include <config.h>
 #endif
 
+#ifdef _MSC_VER
+#include <config_msvc.h>
+#endif
+
 #ifdef WIN32
 #include <windows.h>
 #endif
