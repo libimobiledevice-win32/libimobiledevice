@@ -63,6 +63,10 @@ typedef enum {
 	AFC_E_NO_MEM                = 31,
 	AFC_E_NOT_ENOUGH_DATA       = 32,
 	AFC_E_DIR_NOT_EMPTY         = 33,
+	AFC_E_SERVICE_CLIENT_FAILED = 34,
+	AFC_E_EMPTY_RESPONSE        = 35,
+	AFC_E_INCOMPLETE_HEADER     = 36,
+
 	AFC_E_FORCE_SIGNED_TYPE     = -1
 } afc_error_t;
 
