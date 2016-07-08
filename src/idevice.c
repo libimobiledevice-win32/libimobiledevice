@@ -333,6 +333,11 @@ LIBIMOBILEDEVICE_API idevice_error_t idevice_device_list_free(char **devices)
 	return IDEVICE_E_SUCCESS;
 }
 
+LIBIMOBILEDEVICE_API void idevice_set_debug_callback(idevice_debug_cb_t callback)
+{
+	internal_set_debug_callback(callback);
+}
+
 LIBIMOBILEDEVICE_API void idevice_set_debug_level(int level)
 {
 	internal_set_debug_level(level);
