@@ -45,10 +45,16 @@
 #endif
 
 static int debug_level;
+static idevice_debug_cb_t cb = NULL;
 
 void internal_set_debug_level(int level)
 {
 	debug_level = level;
+}
+
+void internal_set_debug_callback(idevice_debug_cb_t callback)
+{
+	cb = callback;
 }
 
 #define MAX_PRINT_LEN 16*1024
@@ -71,13 +77,21 @@ static void debug_print_line(const char *func, const char *file, int line, const
 	/* trim ending newlines */
 
 	/* print header */
-	printf ("%s: ", header);
+	if (!cb)
+	{
+		printf("%s: ", header);
 
-	/* print actual debug content */
-	printf ("%s\n", buffer);
+		/* print actual debug content */
+		printf("%s\n", buffer);
 
-	/* flush this output, as we need to debug */
-	fflush (stdout);
+		/* flush this output, as we need to debug */
+		fflush(stdout);
+	}
+	else
+	{
+		cb(header);
+		cb(buffer);
+	}
 
 	free (header);
 }
