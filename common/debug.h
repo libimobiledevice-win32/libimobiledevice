@@ -24,6 +24,7 @@
 #define __DEBUG_H
 
 #include <plist/plist.h>
+#include "libimobiledevice/libimobiledevice.h"
 
 /** Enables calling applications to capture debug messages from libimobiledevice */
 typedef void(*idevice_debug_cb_t) (char *message);
@@ -40,7 +41,7 @@ void internal_set_debug_callback(idevice_debug_cb_t callback);
 #define debug_plist(a)
 #endif
 
-void debug_info_real(const char *func,
+LIBIMOBILEDEVICE_API_MSC void debug_info_real(const char *func,
 											const char *file,
 											int	line,
 											const char *format, ...);

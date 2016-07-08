@@ -97,7 +97,7 @@ static void debug_print_line(const char *func, const char *file, int line, const
 }
 #endif
 
-void debug_info_real(const char *func, const char *file, int line, const char *format, ...)
+LIBIMOBILEDEVICE_API_MSC void debug_info_real(const char *func, const char *file, int line, const char *format, ...)
 {
 #ifndef STRIP_DEBUG_CODE
 	va_list args;
