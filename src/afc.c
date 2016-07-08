@@ -110,7 +110,7 @@ LIBIMOBILEDEVICE_API afc_error_t afc_client_new(idevice_t device, lockdownd_serv
 
 	service_client_t parent = NULL;
 	if (service_client_new(device, service, &parent) != SERVICE_E_SUCCESS) {
-		return AFC_E_MUX_ERROR;
+		return AFC_E_SERVICE_CLIENT_FAILED;
 	}
 
 	afc_error_t err = afc_client_new_with_service_client(parent, client);
@@ -246,10 +246,10 @@ static afc_error_t afc_receive_data(afc_client_t client, char **bytes, uint32_t 
 	AFCPacket_from_LE(&header);
 	if (*bytes_recv == 0) {
 		debug_info("Just didn't get enough.");
-		return AFC_E_MUX_ERROR;
+		return AFC_E_EMPTY_RESPONSE;
 	} else if (*bytes_recv < sizeof(AFCPacket)) {
 		debug_info("Did not even get the AFCPacket header");
-		return AFC_E_MUX_ERROR;
+		return AFC_E_INCOMPLETE_HEADER;
 	}
 
 	/* check if it's a valid AFC header */
