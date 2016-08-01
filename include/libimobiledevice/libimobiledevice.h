@@ -99,7 +99,9 @@ LIBIMOBILEDEVICE_API_MSC void idevice_set_debug_callback(idevice_debug_cb_t call
 /**
  * Set the level of debugging.
  *
- * @param level Set to 0 for no debug output or 1 to enable debug output.
+ * @param level Set to 0 for no debug output, 1 to enable basic debug output and 2 to enable full debug output.
+ * When set to 2, the values of buffers being sent across the wire are printed out as well, this results in very
+ * verbose output.
  */
 LIBIMOBILEDEVICE_API_MSC void idevice_set_debug_level(int level);
 
