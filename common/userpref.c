@@ -39,6 +39,8 @@
 #include <pwd.h>
 #endif
 
+#include <usbmuxd.h>
+
 #ifdef _MSC_VER
 #include "windows.h"
 #endif
