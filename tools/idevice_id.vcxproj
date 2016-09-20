@@ -175,9 +175,7 @@
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\libiconv.redist.1.14.0.11\build\native\libiconv.redist.targets" Condition="Exists('..\packages\libiconv.redist.1.14.0.11\build\native\libiconv.redist.targets')" />
     <Import Project="..\packages\libiconv.1.14.0.11\build\native\libiconv.targets" Condition="Exists('..\packages\libiconv.1.14.0.11\build\native\libiconv.targets')" />
-    <Import Project="..\packages\libxml2.redist.2.7.8.7\build\native\libxml2.redist.targets" Condition="Exists('..\packages\libxml2.redist.2.7.8.7\build\native\libxml2.redist.targets')" />
-    <Import Project="..\packages\libxml2.2.7.8.7\build\native\libxml2.targets" Condition="Exists('..\packages\libxml2.2.7.8.7\build\native\libxml2.targets')" />
-    <Import Project="..\packages\libplist.1.12.48\build\native\libplist.targets" Condition="Exists('..\packages\libplist.1.12.48\build\native\libplist.targets')" />
+    <Import Project="..\packages\libplist.1.12.113\build\native\libplist.targets" Condition="Exists('..\packages\libplist.1.12.113\build\native\libplist.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -185,8 +183,6 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\libiconv.redist.1.14.0.11\build\native\libiconv.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\libiconv.redist.1.14.0.11\build\native\libiconv.redist.targets'))" />
     <Error Condition="!Exists('..\packages\libiconv.1.14.0.11\build\native\libiconv.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\libiconv.1.14.0.11\build\native\libiconv.targets'))" />
-    <Error Condition="!Exists('..\packages\libxml2.redist.2.7.8.7\build\native\libxml2.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\libxml2.redist.2.7.8.7\build\native\libxml2.redist.targets'))" />
-    <Error Condition="!Exists('..\packages\libxml2.2.7.8.7\build\native\libxml2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\libxml2.2.7.8.7\build\native\libxml2.targets'))" />
-    <Error Condition="!Exists('..\packages\libplist.1.12.48\build\native\libplist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\libplist.1.12.48\build\native\libplist.targets'))" />
+    <Error Condition="!Exists('..\packages\libplist.1.12.113\build\native\libplist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\libplist.1.12.113\build\native\libplist.targets'))" />
   </Target>
 </Project>

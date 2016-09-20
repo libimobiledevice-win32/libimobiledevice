@@ -83,7 +83,8 @@ int main(int argc, char **argv)
 	if (IDEVICE_E_SUCCESS != idevice_new(&device, udid)) {
 		if (udid) {
 			printf("No device found with udid %s, is it plugged in?\n", udid);
-		} else {
+		}
+		else {
 			printf("No device found, is it plugged in?\n");
 		}
 		return -1;
@@ -100,7 +101,8 @@ int main(int argc, char **argv)
 	if (service && service->port > 0) {
 		if (screenshotr_client_new(device, service, &shotr) != SCREENSHOTR_E_SUCCESS) {
 			printf("Could not connect to screenshotr!\n");
-		} else {
+		}
+		else {
 			char *imgdata = NULL;
 			uint64_t imgsize = 0;
 			if (!filename) {
@@ -108,25 +110,33 @@ int main(int argc, char **argv)
 				filename = (char*)malloc(36);
 				strftime(filename, 36, "screenshot-%Y-%m-%d-%H-%M-%S.tiff", gmtime(&now));
 			}
-			if (screenshotr_take_screenshot(shotr, &imgdata, &imgsize) == SCREENSHOTR_E_SUCCESS) {
-				FILE *f = fopen(filename, "wb");
-				if (f) {
-					if (fwrite(imgdata, 1, (size_t)imgsize, f) == (size_t)imgsize) {
-						printf("Screenshot saved to %s\n", filename);
-						result = 0;
-					} else {
-						printf("Could not save screenshot to file %s!\n", filename);
+
+			while (1)
+			{
+				if (screenshotr_take_screenshot(shotr, &imgdata, &imgsize) == SCREENSHOTR_E_SUCCESS) {
+					FILE *f = fopen(filename, "wb");
+					if (f) {
+						if (fwrite(imgdata, 1, (size_t)imgsize, f) == (size_t)imgsize) {
+							printf("Screenshot saved to %s\n", filename);
+							result = 0;
+						}
+						else {
+							printf("Could not save screenshot to file %s!\n", filename);
+						}
+						fclose(f);
 					}
-					fclose(f);
-				} else {
-					printf("Could not open %s for writing: %s\n", filename, strerror(errno));
+					else {
+						printf("Could not open %s for writing: %s\n", filename, strerror(errno));
+					}
 				}
-			} else {
-				printf("Could not get screenshot!\n");
+				else {
+					printf("Could not get screenshot!\n");
+				}
 			}
 			screenshotr_client_free(shotr);
 		}
-	} else {
+	}
+	else {
 		printf("Could not start screenshotr service! Remember that you have to mount the Developer disk image on your device if you want to use the screenshotr service.\n");
 	}
 
@@ -144,7 +154,7 @@ void print_usage(int argc, char **argv)
 	char *name = NULL;
 
 	name = strrchr(argv[0], '/');
-	printf("Usage: %s [OPTIONS] [FILE]\n", (name ? name + 1: argv[0]));
+	printf("Usage: %s [OPTIONS] [FILE]\n", (name ? name + 1 : argv[0]));
 	printf("Gets a screenshot from a device.\n");
 	printf("The screenshot is saved as a TIFF image with the given FILE name,\n");
 	printf("where the default name is \"screenshot-DATE.tiff\", e.g.:\n");

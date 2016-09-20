@@ -22,6 +22,7 @@
     <ProjectGuid>{EE16E7F2-AC27-4E30-AB22-B02A9C2380B4}</ProjectGuid>
     <RootNamespace>libimobiledevice</RootNamespace>
     <ProjectName>imobiledevice</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -91,9 +92,13 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>packages\libxml2.2.7.8.7\build\native\lib\v110\$(Platform)\$(Configuration)\dynamic\cdecl;packages\libiconv.1.14.0.11\build\native\lib\v110\$(Platform)\$(Configuration)\dynamic\cdecl;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libxml2.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>packages\libiconv.1.14.0.11\build\native\lib\v110\$(Platform)\$(Configuration)\dynamic\cdecl;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreLinkEvent>
+      <Command>copy "$(SolutionDir)packages\libplist.symbols.1.12.113\build\native\bin\$(Platform)\v140\$(Configuration)\*.pdb" "$(OutDir)"
+copy "$(SolutionDir)packages\libusbmuxd.symbols.1.0.10.54\build\native\bin\$(Platform)\v140\$(Configuration)\*.pdb" "$(OutDir)"</Command>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -105,9 +110,13 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>packages\libxml2.2.7.8.7\build\native\lib\v110\$(Platform)\$(Configuration)\dynamic\cdecl;packages\libiconv.1.14.0.11\build\native\lib\v110\$(Platform)\$(Configuration)\dynamic\cdecl;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libxml2.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>packages\libiconv.1.14.0.11\build\native\lib\v110\$(Platform)\$(Configuration)\dynamic\cdecl;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreLinkEvent>
+      <Command>copy "$(SolutionDir)packages\libplist.symbols.1.12.113\build\native\bin\$(Platform)\v140\$(Configuration)\*.pdb" "$(OutDir)"
+copy "$(SolutionDir)packages\libusbmuxd.symbols.1.0.10.54\build\native\bin\$(Platform)\v140\$(Configuration)\*.pdb" "$(OutDir)"</Command>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -123,9 +132,13 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>packages\libxml2.2.7.8.7\build\native\lib\v110\$(Platform)\$(Configuration)\dynamic\cdecl;packages\libiconv.1.14.0.11\build\native\lib\v110\$(Platform)\$(Configuration)\dynamic\cdecl;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libxml2.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>packages\libiconv.1.14.0.11\build\native\lib\v110\$(Platform)\$(Configuration)\dynamic\cdecl;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreLinkEvent>
+      <Command>copy "$(SolutionDir)packages\libplist.symbols.1.12.113\build\native\bin\$(Platform)\v140\$(Configuration)\*.pdb" "$(OutDir)"
+copy "$(SolutionDir)packages\libusbmuxd.symbols.1.0.10.54\build\native\bin\$(Platform)\v140\$(Configuration)\*.pdb" "$(OutDir)"</Command>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -141,9 +154,13 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>packages\libxml2.2.7.8.7\build\native\lib\v110\$(Platform)\$(Configuration)\dynamic\cdecl;packages\libiconv.1.14.0.11\build\native\lib\v110\$(Platform)\$(Configuration)\dynamic\cdecl;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libxml2.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>packages\libiconv.1.14.0.11\build\native\lib\v110\$(Platform)\$(Configuration)\dynamic\cdecl;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreLinkEvent>
+      <Command>copy "$(SolutionDir)packages\libplist.symbols.1.12.113\build\native\bin\$(Platform)\v140\$(Configuration)\*.pdb" "$(OutDir)"
+copy "$(SolutionDir)packages\libusbmuxd.symbols.1.0.10.54\build\native\bin\$(Platform)\v140\$(Configuration)\*.pdb" "$(OutDir)"</Command>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="common\debug.h" />
@@ -244,8 +261,6 @@
     <Import Project="packages\zlib.redist.1.2.8.7\build\native\zlib.redist.targets" Condition="Exists('packages\zlib.redist.1.2.8.7\build\native\zlib.redist.targets')" />
     <Import Project="packages\openssl.redist.1.0.1.25\build\native\openssl.redist.targets" Condition="Exists('packages\openssl.redist.1.0.1.25\build\native\openssl.redist.targets')" />
     <Import Project="packages\dirent.1.13.1\build\native\dirent.targets" Condition="Exists('packages\dirent.1.13.1\build\native\dirent.targets')" />
-    <Import Project="packages\libxml2.redist.2.7.8.7\build\native\libxml2.redist.targets" Condition="Exists('packages\libxml2.redist.2.7.8.7\build\native\libxml2.redist.targets')" />
-    <Import Project="packages\libxml2.2.7.8.7\build\native\libxml2.targets" Condition="Exists('packages\libxml2.2.7.8.7\build\native\libxml2.targets')" />
     <Import Project="packages\libiconv.redist.1.14.0.11\build\native\libiconv.redist.targets" Condition="Exists('packages\libiconv.redist.1.14.0.11\build\native\libiconv.redist.targets')" />
     <Import Project="packages\libiconv.1.14.0.11\build\native\libiconv.targets" Condition="Exists('packages\libiconv.1.14.0.11\build\native\libiconv.targets')" />
     <Import Project="packages\zlib.v120.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\build\native\zlib.v120.windesktop.msvcstl.dyn.rt-dyn.targets" Condition="Exists('packages\zlib.v120.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\build\native\zlib.v120.windesktop.msvcstl.dyn.rt-dyn.targets')" />
@@ -254,10 +269,12 @@
     <Import Project="packages\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\build\native\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.targets" Condition="Exists('packages\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\build\native\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.targets')" />
     <Import Project="packages\openssl.v140.windesktop.msvcstl.dyn.rt-dyn.x64.1.0.2.0\build\native\openssl.v140.windesktop.msvcstl.dyn.rt-dyn.x64.targets" Condition="Exists('packages\openssl.v140.windesktop.msvcstl.dyn.rt-dyn.x64.1.0.2.0\build\native\openssl.v140.windesktop.msvcstl.dyn.rt-dyn.x64.targets')" />
     <Import Project="packages\openssl.v140.windesktop.msvcstl.dyn.rt-dyn.x86.1.0.2.0\build\native\openssl.v140.windesktop.msvcstl.dyn.rt-dyn.x86.targets" Condition="Exists('packages\openssl.v140.windesktop.msvcstl.dyn.rt-dyn.x86.1.0.2.0\build\native\openssl.v140.windesktop.msvcstl.dyn.rt-dyn.x86.targets')" />
-    <Import Project="packages\libplist.redist.1.12.49\build\native\libplist.redist.targets" Condition="Exists('packages\libplist.redist.1.12.49\build\native\libplist.redist.targets')" />
-    <Import Project="packages\libplist.1.12.49\build\native\libplist.targets" Condition="Exists('packages\libplist.1.12.49\build\native\libplist.targets')" />
-    <Import Project="packages\libusbmuxd.redist.1.0.10.13\build\native\libusbmuxd.redist.targets" Condition="Exists('packages\libusbmuxd.redist.1.0.10.13\build\native\libusbmuxd.redist.targets')" />
-    <Import Project="packages\libusbmuxd.1.0.10.13\build\native\libusbmuxd.targets" Condition="Exists('packages\libusbmuxd.1.0.10.13\build\native\libusbmuxd.targets')" />
+    <Import Project="packages\libplist.redist.1.12.113\build\native\libplist.redist.targets" Condition="Exists('packages\libplist.redist.1.12.113\build\native\libplist.redist.targets')" />
+    <Import Project="packages\libplist.1.12.113\build\native\libplist.targets" Condition="Exists('packages\libplist.1.12.113\build\native\libplist.targets')" />
+    <Import Project="packages\libplist.symbols.1.12.113\build\native\libplist.symbols.targets" Condition="Exists('packages\libplist.symbols.1.12.113\build\native\libplist.symbols.targets')" />
+    <Import Project="packages\libusbmuxd.redist.1.0.10.54\build\native\libusbmuxd.redist.targets" Condition="Exists('packages\libusbmuxd.redist.1.0.10.54\build\native\libusbmuxd.redist.targets')" />
+    <Import Project="packages\libusbmuxd.1.0.10.54\build\native\libusbmuxd.targets" Condition="Exists('packages\libusbmuxd.1.0.10.54\build\native\libusbmuxd.targets')" />
+    <Import Project="packages\libusbmuxd.symbols.1.0.10.54\build\native\libusbmuxd.symbols.targets" Condition="Exists('packages\libusbmuxd.symbols.1.0.10.54\build\native\libusbmuxd.symbols.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -266,8 +283,6 @@
     <Error Condition="!Exists('packages\zlib.redist.1.2.8.7\build\native\zlib.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\zlib.redist.1.2.8.7\build\native\zlib.redist.targets'))" />
     <Error Condition="!Exists('packages\openssl.redist.1.0.1.25\build\native\openssl.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\openssl.redist.1.0.1.25\build\native\openssl.redist.targets'))" />
     <Error Condition="!Exists('packages\dirent.1.13.1\build\native\dirent.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\dirent.1.13.1\build\native\dirent.targets'))" />
-    <Error Condition="!Exists('packages\libxml2.redist.2.7.8.7\build\native\libxml2.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libxml2.redist.2.7.8.7\build\native\libxml2.redist.targets'))" />
-    <Error Condition="!Exists('packages\libxml2.2.7.8.7\build\native\libxml2.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libxml2.2.7.8.7\build\native\libxml2.targets'))" />
     <Error Condition="!Exists('packages\libiconv.redist.1.14.0.11\build\native\libiconv.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libiconv.redist.1.14.0.11\build\native\libiconv.redist.targets'))" />
     <Error Condition="!Exists('packages\libiconv.1.14.0.11\build\native\libiconv.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libiconv.1.14.0.11\build\native\libiconv.targets'))" />
     <Error Condition="!Exists('packages\zlib.v120.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\build\native\zlib.v120.windesktop.msvcstl.dyn.rt-dyn.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\zlib.v120.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\build\native\zlib.v120.windesktop.msvcstl.dyn.rt-dyn.targets'))" />
@@ -276,13 +291,14 @@
     <Error Condition="!Exists('packages\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\build\native\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\build\native\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.targets'))" />
     <Error Condition="!Exists('packages\openssl.v140.windesktop.msvcstl.dyn.rt-dyn.x64.1.0.2.0\build\native\openssl.v140.windesktop.msvcstl.dyn.rt-dyn.x64.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\openssl.v140.windesktop.msvcstl.dyn.rt-dyn.x64.1.0.2.0\build\native\openssl.v140.windesktop.msvcstl.dyn.rt-dyn.x64.targets'))" />
     <Error Condition="!Exists('packages\openssl.v140.windesktop.msvcstl.dyn.rt-dyn.x86.1.0.2.0\build\native\openssl.v140.windesktop.msvcstl.dyn.rt-dyn.x86.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\openssl.v140.windesktop.msvcstl.dyn.rt-dyn.x86.1.0.2.0\build\native\openssl.v140.windesktop.msvcstl.dyn.rt-dyn.x86.targets'))" />
-    <Error Condition="!Exists('packages\libplist.redist.1.12.49\build\native\libplist.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libplist.redist.1.12.49\build\native\libplist.redist.targets'))" />
-    <Error Condition="!Exists('packages\libplist.1.12.49\build\native\libplist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libplist.1.12.49\build\native\libplist.targets'))" />
-    <Error Condition="!Exists('packages\libusbmuxd.redist.1.0.10.13\build\native\libusbmuxd.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libusbmuxd.redist.1.0.10.13\build\native\libusbmuxd.redist.targets'))" />
-    <Error Condition="!Exists('packages\libusbmuxd.1.0.10.13\build\native\libusbmuxd.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libusbmuxd.1.0.10.13\build\native\libusbmuxd.targets'))" />
+    <Error Condition="!Exists('packages\libplist.redist.1.12.113\build\native\libplist.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libplist.redist.1.12.113\build\native\libplist.redist.targets'))" />
+    <Error Condition="!Exists('packages\libplist.1.12.113\build\native\libplist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libplist.1.12.113\build\native\libplist.targets'))" />
+    <Error Condition="!Exists('packages\libplist.symbols.1.12.113\build\native\libplist.symbols.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libplist.symbols.1.12.113\build\native\libplist.symbols.targets'))" />
+    <Error Condition="!Exists('packages\libusbmuxd.redist.1.0.10.54\build\native\libusbmuxd.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libusbmuxd.redist.1.0.10.54\build\native\libusbmuxd.redist.targets'))" />
+    <Error Condition="!Exists('packages\libusbmuxd.1.0.10.54\build\native\libusbmuxd.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libusbmuxd.1.0.10.54\build\native\libusbmuxd.targets'))" />
+    <Error Condition="!Exists('packages\libusbmuxd.symbols.1.0.10.54\build\native\libusbmuxd.symbols.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libusbmuxd.symbols.1.0.10.54\build\native\libusbmuxd.symbols.targets'))" />
   </Target>
   <ItemGroup>
-    <DynamicLibraries Include="packages\libxml2.redist.2.7.8.7\build\native\bin\v110\$(Platform)\Release\dynamic\cdecl\libxml2.dll" />
     <DynamicLibraries Include="packages\zlib.redist.1.2.8.7\build\native\bin\v120\$(Platform)\Release\dynamic\cdecl\zlib.dll" />
     <DynamicLibraries Include="packages\libiconv.redist.1.14.0.11\build\native\bin\v110\$(Platform)\Release\dynamic\cdecl\libiconv.dll" />
   </ItemGroup>
