@@ -136,7 +136,7 @@ LIBIMOBILEDEVICE_API_MSC misagent_error_t misagent_copy(misagent_client_t client
  *     still returns MISAGENT_E_SUCCESS and profiles will just point to an
  *     empty array.
  */
-misagent_error_t misagent_copy_all(misagent_client_t client, plist_t* profiles);
+LIBIMOBILEDEVICE_API_MSC misagent_error_t misagent_copy_all(misagent_client_t client, plist_t* profiles);
 
 /**
  * Removes a given provisioning profile.
