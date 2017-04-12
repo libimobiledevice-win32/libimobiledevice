@@ -3,6 +3,7 @@
 *.orig
 *.db
 *.opendb
+.vs/
 Debug/
 tools/Debug/
 # git-ls-files --others --exclude-from=.git/info/exclude
