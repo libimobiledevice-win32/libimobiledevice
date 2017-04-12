@@ -1,42 +1,77 @@
-os:
-  - linux
-  - osx
+dist: trusty
+sudo: true
+
+matrix:
+  include:
+    - os: osx
+      env: TARGET=x86_64-apple-darwin RID=osx-x64 RUN_TESTS=yes CROSS=no
+    - os: linux
+      env: TARGET=x86_64-linux-gnu RID=linux-x64 RUN_TESTS=yes CROSS=no
+    - os: linux
+      env: TARGET=arm-linux-gnueabihf RID=linux-arm RUN_TESTS=no CROSS=yes ARCH=armhf
+    - os: linux
+      env: TARGET=aarch64-linux-gnu RID=linux-arm64 RUN_TESTS=no CROSS=yes ARCH=arm64
+
 language: c
-addons:
-  apt:
-    packages:
-    - libssl-dev
+
+env:
+  global:
+  - LIBPLIST_VERSION=1.13.0-117
+  - LIBUSBMUXD_VERSION=1.1.0-58
+  - CFLAGS=-fPIC
+
+before_install:
+- test -n $CC && unset CC
+- if [ "$CROSS" = "yes" ]; then sudo apt-get install -y gcc-$TARGET binutils-$TARGET g++-$TARGET; fi
+- if [ "$CROSS" = "yes" ]; then sudo rm -rf /etc/apt/sources.list.d; fi
+- if [ "$CROSS" = "yes" ]; then sudo echo "deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu trusty main universe" | sudo tee /etc/apt/sources.list > /dev/null; fi
+- if [ "$CROSS" = "yes" ]; then sudo echo "deb [arch=$ARCH] http://ports.ubuntu.com/ trusty main universe" | sudo tee -a /etc/apt/sources.list > /dev/null; fi
+- if [ "$CROSS" = "yes" ]; then sudo dpkg --add-architecture $ARCH; fi
+- if [ "$CROSS" = "yes" ]; then sudo apt-get update -qq; fi
+- if [ "$CROSS" = "yes" ]; then sudo apt-get install -y --force-yes libssl1.0.0/trusty libssl-dev/trusty zlib1g-dev/trusty libc6/trusty libc6-dev/trusty libgcc1/trusty linux-libc-dev/trusty; fi
+- if [ "$CROSS" = "yes" ]; then sudo apt-get install -y --force-yes gcc/trusty libssl1.0.0:$ARCH/trusty libssl-dev:$ARCH/trusty libc6:$ARCH/trusty libc6-dev:$ARCH/trusty libgcc1:$ARCH/trusty zlib1g-dev:$ARCH/trusty gcc-4.9-base:$ARCH/trusty linux-libc-dev:$ARCH/trusty; fi
+
 install:
 - pip install --user azure-cli
 - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install openssl; fi
+- if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./build/install-patchelf.sh; fi
+
 before_script:
-- wget https://qmcdn.blob.core.windows.net/imobiledevice/libplist-$TRAVIS_OS_NAME-1.13.0-97.tar.gz
-- wget https://qmcdn.blob.core.windows.net/imobiledevice/libusbmuxd-$TRAVIS_OS_NAME-1.1.0-51.tar.gz
+- wget https://qmcdn.blob.core.windows.net/imobiledevice/libplist-$RID-$LIBPLIST_VERSION.tar.gz
+- wget https://qmcdn.blob.core.windows.net/imobiledevice/libusbmuxd-$RID-$LIBUSBMUXD_VERSION.tar.gz
 - mkdir $HOME/ext
-- tar -xvzf libplist-$TRAVIS_OS_NAME-1.13.0-97.tar.gz -C $HOME/ext
-- tar -xvzf libusbmuxd-$TRAVIS_OS_NAME-1.1.0-51.tar.gz -C $HOME/ext
+- tar -xvzf libplist-$RID-$LIBPLIST_VERSION.tar.gz -C $HOME/ext
+- tar -xvzf libusbmuxd-$RID-$LIBUSBMUXD_VERSION.tar.gz -C $HOME/ext
 - find $HOME/ext
 - LC_CTYPE=C LANG=C find $HOME/ext/lib/pkgconfig/ -name '*.pc' -print0 | xargs -0 sed -i -e 's@/travis/out@/travis/ext@g'
 - LC_CTYPE=C LANG=C find $HOME/ext/lib/ -name '*.la' -print0 | xargs -0 sed -i -e 's@/travis/out@/travis/ext@g'
+
 script:
-- export CFLAGS=-I$HOME/ext/include
+- export CFLAGS="$CFLAGS -I$HOME/ext/include"
 - export PKG_CONFIG_PATH=$HOME/ext/lib/pkgconfig:$PKG_CONFIG_PATH
-- export LDFLAGS=-L$HOME/ext/lib
+- export LDFLAGS="$LDFLAGS -L$HOME/ext/lib"
 - if [ "$TRAVIS_OS_NAME" = "osx" ]; then export CFLAGS="$CFLAGS -I/usr/local/opt/openssl/include"; fi
 - if [ "$TRAVIS_OS_NAME" = "osx" ]; then export LDFLAGS="$LDFLAGS -L/usr/local/opt/openssl/lib"; fi
 - pkg-config --print-errors --variable=prefix libplist
 - pkg-config --print-errors --variable=prefix libusbmuxd
-- ./autogen.sh --prefix=$HOME/out
+- ./autogen.sh --prefix=$HOME/out --host=$TARGET --without-cython --enable-static=no --enable-shared=yes --enable-openssl
 - make
+
 after_success:
 - make install
-- tar -zcvf libimobiledevice-$TRAVIS_OS_NAME.tar.gz -C $HOME/out .
+- if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./build/run-patchelf.sh; fi
+- if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./build/patchdylib.sh; fi
+- tar -zcvf libimobiledevice-$RID.tar.gz -C $HOME/out .
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then az=$HOME/Library/Python/2.7/bin/az; fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then az=$HOME/.local/bin/az; fi
-- $az storage blob upload -f libimobiledevice-$TRAVIS_OS_NAME.tar.gz -c imobiledevice -n libimobiledevice-$TRAVIS_OS_NAME-1.2.1-$TRAVIS_BUILD_NUMBER.tar.gz
+- $az storage blob upload -f libimobiledevice-$RID.tar.gz -c imobiledevice -n libimobiledevice-$RID-1.2.1-$TRAVIS_BUILD_NUMBER.tar.gz
+
+after_failure:
+- cat config.log
+
 deploy:
   provider: releases
-  file: libimobiledevice-$TRAVIS_OS_NAME.tar.gz
+  file: libimobiledevice-$RID.tar.gz
   skip_cleanup: true
   on:
     tags: true
