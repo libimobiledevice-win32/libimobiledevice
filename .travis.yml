@@ -59,6 +59,7 @@ script:
 
 after_success:
 - make install
+- cp $HOME/ext/bin/* $HOME/out/bin/
 - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./build/run-patchelf.sh; fi
 - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./build/patchdylib.sh; fi
 - tar -zcvf libimobiledevice-$RID.tar.gz -C $HOME/out .
