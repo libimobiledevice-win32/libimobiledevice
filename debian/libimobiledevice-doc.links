@@ -1,0 +1,2 @@
+# Override embedded copy of jquery
+/usr/share/javascript/jquery/jquery.js /usr/share/doc/libimobiledevice-doc/libimobiledevice/jquery.js

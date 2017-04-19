@@ -1,0 +1,5 @@
+02-fix-link-errors.patch
+09_use_python_config.patch
+10_Updated-cert-callback-to-gnutls3-API.patch
+git_gnutls_proxy.patch
+git_local_socket.patch
