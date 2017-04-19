@@ -6,21 +6,15 @@ XSBC-Original-Maintainer: gtkpod Maintainers <pkg-gtkpod-devel@lists.alioth.debi
 Uploaders: Julien Lavergne <julien.lavergne@gmail.com>
 Standards-Version: 3.9.6
 Build-Depends: debhelper (>= 9),
-               dh-python,
-               libgnutls28-dev,
-               libgcrypt20-dev,
+               libssl-dev,
                libusb-1.0-0-dev (>= 1.0.3) [linux-any],
                libglib2.0-dev (>= 2.14.1),
                libplist-dev (>= 1.11),
                libplist++-dev (>= 1.11),
-               python-all-dev (>= 2.6.6-3~),
-               cython (>= 0.17.0),
                libusbmuxd-dev (>= 1.0.9),
                libtasn1-6-dev (>= 1.1),
                libreadline-dev,
-               python-plist (>= 1.8-2~),
                dh-autoreconf
-X-Python-Version: >= 2.3
 Homepage: http://libimobiledevice.org/
 Vcs-Git: git://git.debian.org/git/pkg-gtkpod/packages/libimobiledevice.git
 Vcs-Browser: http://git.debian.org/?p=pkg-gtkpod/packages/libimobiledevice.git
@@ -50,8 +44,7 @@ Depends: libimobiledevice6 (= ${binary:Version}),
          libglib2.0-dev,
          libplist-dev,
          libusbmuxd-dev,
-         libgnutls28-dev,
-         libgcrypt20-dev,
+         libssl-dev,
          libtasn1-6-dev
 Description: Library for communicating with iPhone and iPod Touch devices
  libimobiledevice is a library that talks the native Apple USB protocols that
@@ -79,22 +72,6 @@ Description: Library for communicating with iPhone and iPod Touch devices
  .
  This package contains the debugging symbols.
 
-Package: python-imobiledevice
-Section: python
-Architecture: any
-Depends: ${shlibs:Depends},
-         ${misc:Depends},
-         ${python:Depends}
-Provides: ${python:Provides}
-Conflicts: python-libiphone, python-iphone
-Replaces: python-libiphone, python-iphone
-Description: Library for communicating with iPhone and iPod Touch devices
- libimobiledevice is a library that talks the native Apple USB protocols that
- the iPhone and iPod Touch use. Unlike other projects, libimobiledevice does
- not depend on using any existing libraries from Apple.
- .
- This package contains the Python bindings
-
 Package: libimobiledevice-utils
 Architecture: any
 Section: utils
@@ -106,14 +83,3 @@ Description: Library for communicating with iPhone and iPod Touch devices
  not depend on using any existing libraries from Apple.
  .
  This package contains utilities and examples which use libimobiledevice.
-
-Package: libimobiledevice-doc
-Architecture: all
-Section: doc
-Depends: libjs-jquery, ${misc:Depends}
-Description: Library for communicating with iPhone and iPod Touch devices
- libimobiledevice is a library that talks the native Apple USB protocols that
- the iPhone and iPod Touch use. Unlike other projects, libimobiledevice does
- not depend on using any existing libraries from Apple.
- .
- This package contains the documentation for the library.

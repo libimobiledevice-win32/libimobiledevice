@@ -4,13 +4,13 @@ sudo: true
 matrix:
   include:
     - os: osx
-      env: TARGET=x86_64-apple-darwin RID=osx-x64 RUN_TESTS=yes CROSS=no
+      env: TARGET=x86_64-apple-darwin RID=osx-x64 RUN_TESTS=yes CROSS=no CREATE_DEB=no
     - os: linux
-      env: TARGET=x86_64-linux-gnu RID=linux-x64 RUN_TESTS=yes CROSS=no
+      env: TARGET=x86_64-linux-gnu RID=linux-x64 RUN_TESTS=yes CROSS=no CREATE_DEB=yes
     - os: linux
-      env: TARGET=arm-linux-gnueabihf RID=linux-arm RUN_TESTS=no CROSS=yes ARCH=armhf
+      env: TARGET=arm-linux-gnueabihf RID=linux-arm RUN_TESTS=no CROSS=yes ARCH=armhf CREATE_DEB=no
     - os: linux
-      env: TARGET=aarch64-linux-gnu RID=linux-arm64 RUN_TESTS=no CROSS=yes ARCH=arm64
+      env: TARGET=aarch64-linux-gnu RID=linux-arm64 RUN_TESTS=no CROSS=yes ARCH=arm64 CREATE_DEB=no
 
 language: c
 
@@ -22,6 +22,7 @@ env:
 
 before_install:
 - test -n $CC && unset CC
+- if [ "$CREATE_DEB" = "yes" ]; then sudo apt-get install -y devscripts debhelper dh-autoreconf dput; fi
 - if [ "$CROSS" = "yes" ]; then sudo apt-get install -y gcc-$TARGET binutils-$TARGET g++-$TARGET; fi
 - if [ "$CROSS" = "yes" ]; then sudo rm -rf /etc/apt/sources.list.d; fi
 - if [ "$CROSS" = "yes" ]; then sudo echo "deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu trusty main universe" | sudo tee /etc/apt/sources.list > /dev/null; fi
@@ -66,6 +67,7 @@ after_success:
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then az=$HOME/Library/Python/2.7/bin/az; fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then az=$HOME/.local/bin/az; fi
 - $az storage blob upload -f libimobiledevice-$RID.tar.gz -c imobiledevice -n libimobiledevice-$RID-1.2.1-$TRAVIS_BUILD_NUMBER.tar.gz
+- if [[ "$CREATE_DEB" == "yes" ]]; then ./make-deb.sh xenial; fi
 
 after_failure:
 - cat config.log

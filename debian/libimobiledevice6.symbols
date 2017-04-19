@@ -24,6 +24,7 @@ libimobiledevice.so.6 libimobiledevice6 #MINVER#
  afc_rename_path@Base 0.9.7
  afc_set_file_time@Base 0.9.7
  afc_truncate@Base 0.9.7
+ debug_info_real@Base 1.2.1.97-0xenial
  debugserver_client_free@Base 1.1.7
  debugserver_client_new@Base 1.1.7
  debugserver_client_receive@Base 1.1.7
@@ -70,6 +71,7 @@ libimobiledevice.so.6 libimobiledevice6 #MINVER#
  idevice_connect@Base 0.9.7
  idevice_connection_disable_ssl@Base 0.9.7
  idevice_connection_enable_ssl@Base 0.9.7
+ idevice_connection_get_fd@Base 1.2.1.97-0xenial
  idevice_connection_receive@Base 0.9.7
  idevice_connection_receive_timeout@Base 0.9.7
  idevice_connection_send@Base 0.9.7
@@ -82,6 +84,7 @@ libimobiledevice.so.6 libimobiledevice6 #MINVER#
  idevice_get_handle@Base 0.9.7
  idevice_get_udid@Base 1.1.4
  idevice_new@Base 0.9.7
+ idevice_set_debug_callback@Base 1.2.1.97-0xenial
  idevice_set_debug_level@Base 0.9.7
  instproxy_archive@Base 0.9.7
  instproxy_browse@Base 0.9.7
@@ -121,6 +124,7 @@ libimobiledevice.so.6 libimobiledevice6 #MINVER#
  lockdownd_get_value@Base 0.9.7
  lockdownd_goodbye@Base 0.9.7
  lockdownd_pair@Base 0.9.7
+ lockdownd_pair_with_options@Base 1.2.1.97-0xenial
  lockdownd_query_type@Base 0.9.7
  lockdownd_receive@Base 0.9.7
  lockdownd_remove_value@Base 0.9.7
@@ -137,6 +141,7 @@ libimobiledevice.so.6 libimobiledevice6 #MINVER#
  misagent_client_new@Base 1.1.5
  misagent_client_start_service@Base 1.1.6
  misagent_copy@Base 1.1.5
+ misagent_copy_all@Base 1.2.1.97-0xenial
  misagent_get_status_code@Base 1.1.5
  misagent_install@Base 1.1.5
  misagent_remove@Base 1.1.5
@@ -197,6 +202,8 @@ libimobiledevice.so.6 libimobiledevice6 #MINVER#
  np_observe_notifications@Base 0.9.7
  np_post_notification@Base 0.9.7
  np_set_notify_callback@Base 0.9.7
+ pinvoke_free_string@Base 1.2.1.97-0xenial
+ pinvoke_get_string_length@Base 1.2.1.97-0xenial
  property_list_service_client_free@Base 1.1.7
  property_list_service_client_new@Base 1.1.7
  property_list_service_disable_ssl@Base 1.1.7
@@ -225,6 +232,7 @@ libimobiledevice.so.6 libimobiledevice6 #MINVER#
  sbservices_get_interface_orientation@Base 1.1.4
  sbservices_set_icon_state@Base 0.9.7
  screenshotr_client_free@Base 1.0.0
+ screenshotr_screenshot_free@Base 1.2.1.97-0xenial
  screenshotr_client_new@Base 1.0.0
  screenshotr_client_start_service@Base 1.1.6
  screenshotr_take_screenshot@Base 1.0.0

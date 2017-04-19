@@ -1,9 +1,0 @@
-Document: libimobiledevice
-Title: Libimobiledevice Reference Manual
-Author: Libomobiledevice team (Zach C, Jonathan Beck, Matt Colyer, Martin Aumueller, Christophe Fergeau, Martin S., Paul Sladen, Patrick Walton, Zoltan Balaton, Nikias Bassen, Todd Zullinger, Bastien Nocera)
-Abstract: Libimobiledevice is a library to communicate with services running on Apple iPhone/iPod Touch devices.
-Section: Mobile Devices
-
-Format: HTML
-Index: /usr/share/doc/libimobiledevice-doc/libimobiledevice/index.html
-Files: /usr/share/doc/libimobiledevice-doc/libimobiledevice/*.html
