@@ -19,10 +19,11 @@ env:
   - LIBPLIST_VERSION=1.13.0-117
   - LIBUSBMUXD_VERSION=1.1.0-58
   - CFLAGS=-fPIC
+  - LIBIMOBILEDEVICE_VERSION_PREFIX=1.2.1
 
 before_install:
 - test -n $CC && unset CC
-- if [ "$CREATE_DEB" = "yes" ]; then sudo apt-get install -y devscripts debhelper dh-autoreconf dput; fi
+- if [ "$CREATE_DEB" = "yes" ]; then sudo apt-get install -y devscripts debhelper dh-autoreconf dput osc; fi
 - if [ "$CROSS" = "yes" ]; then sudo apt-get install -y gcc-$TARGET binutils-$TARGET g++-$TARGET; fi
 - if [ "$CROSS" = "yes" ]; then sudo rm -rf /etc/apt/sources.list.d; fi
 - if [ "$CROSS" = "yes" ]; then sudo echo "deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu trusty main universe" | sudo tee /etc/apt/sources.list > /dev/null; fi
@@ -68,6 +69,7 @@ after_success:
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then az=$HOME/.local/bin/az; fi
 - $az storage blob upload -f libimobiledevice-$RID.tar.gz -c imobiledevice -n libimobiledevice-$RID-1.2.1-$TRAVIS_BUILD_NUMBER.tar.gz
 - if [[ "$CREATE_DEB" == "yes" ]]; then ./make-deb.sh xenial; fi
+- if [[ "$CREATE_DEB" == "yes" ]]; then ./make-rpm.sh; fi
 
 after_failure:
 - cat config.log
