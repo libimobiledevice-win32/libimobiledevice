@@ -92,6 +92,17 @@ enum idevice_event_type {
 	IDEVICE_DEVICE_PAIRED
 };
 
+/**
+* specifies how libusbmuxd should connect to usbmuxd
+*/
+enum idevice_socket_type {
+	// Use UNIX sockets. The default on Linux and macOS.
+	IDEVICE_SOCKET_TYPE_UNIX = 1,
+
+	// Use TCP sockets. The default and only option on Windows.
+	IDEVICE_SOCKET_TYPE_TCP = 2
+};
+
 /* event data structure */
 /** Provides information about the occurred event. */
 typedef struct {
@@ -370,6 +381,49 @@ LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_get_handle(idevice_t device, ui
  * Gets the unique id for the device.
  */
 LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_get_udid(idevice_t device, char **udid);
+
+/**
+* Sets the socket type (Unix socket or TCP socket) libimobiledevice should use when connecting
+* to usbmuxd.
+*
+* @param value IDEVICE_SOCKET_TYPE_UNIX or IDEVICE_SOCKET_TYPE_TCP
+*
+* @return 0 on success or negative on error
+*/
+LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_set_socket_type(enum idevice_socket_type value);
+
+/**
+* Gets the socket type (Unix socket or TCP socket) libimobiledevice should use when connecting
+* to usbmuxd.
+*
+* @param value A pointer to an integer which will reveive the current socket type
+*
+* @return 0 on success or negative on error
+*/
+LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_get_socket_type(enum idevice_socket_type* value);
+
+/**
+* Sets the TCP endpoint to which libimobiledevice will connect if the socket type is set to
+* SOCKET_TYPE_TCP
+*
+* @param host The hostname or IP address to which to connect
+* @param port The port to which to connect.
+*
+* @return 0 on success or negative on error
+*/
+LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_set_tcp_endpoint(const char* host, uint16_t port);
+
+/**
+* Gets the TCP endpoint to which libimobiledevice will connect if the socket type is set to
+* SOCKET_TYPE_TCP
+*
+* @param host A pointer which will be set to the hostname or IP address to which to connect.
+*             The caller must free this string.
+* @param port The port to which to connect
+*
+* @return 0 on success or negative on error
+*/
+LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_get_tcp_endpoint(char** host, uint16_t* port);
 
 #ifdef __cplusplus
 }

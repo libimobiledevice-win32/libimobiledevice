@@ -1217,3 +1217,39 @@ LIBIMOBILEDEVICE_API idevice_error_t idevice_connection_disable_bypass_ssl(idevi
 
 	return IDEVICE_E_SUCCESS;
 }
+
+LIBIMOBILEDEVICE_API idevice_error_t idevice_set_socket_type(enum idevice_socket_type value)
+{
+	if (usbmuxd_set_socket_type((enum usbmuxd_socket_type)value) != 0) {
+		return IDEVICE_E_UNKNOWN_ERROR;
+	}
+
+	return IDEVICE_E_SUCCESS;
+}
+
+LIBIMOBILEDEVICE_API idevice_error_t idevice_get_socket_type(enum idevice_socket_type* value)
+{
+	if (usbmuxd_get_socket_type((enum usbmuxd_socket_type*)value) != 0) {
+		return IDEVICE_E_UNKNOWN_ERROR;
+	}
+
+	return IDEVICE_E_SUCCESS;
+}
+
+LIBIMOBILEDEVICE_API idevice_error_t idevice_set_tcp_endpoint(const char* host, uint16_t port)
+{
+	if (usbmuxd_set_tcp_endpoint(host, port) != 0) {
+		return IDEVICE_E_UNKNOWN_ERROR;
+	}
+
+	return IDEVICE_E_SUCCESS;
+}
+
+LIBIMOBILEDEVICE_API idevice_error_t idevice_get_tcp_endpoint(char** host, uint16_t* port)
+{
+	if (usbmuxd_get_tcp_endpoint(host, port) != 0) {
+		return IDEVICE_E_UNKNOWN_ERROR;
+	}
+
+	return IDEVICE_E_SUCCESS;
+}
