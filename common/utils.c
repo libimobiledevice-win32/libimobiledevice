@@ -183,9 +183,31 @@ char *string_build_path(const char *elem, ...)
 
 	va_start(args, elem);
 	arg = va_arg(args, char*);
+
+	int oldlen = 0;
+	int newlen = 0;
+
 	while (arg) {
+#ifdef WIN32
+		strcat(out, "\\");
+#else
 		strcat(out, "/");
+#endif
 		strcat(out, arg);
+		newlen = strlen(out);
+
+#ifdef WIN32
+		for (int i = oldlen; i < newlen; i++)
+		{
+			if (out[i] == '/')
+			{
+				out[i] = '\\';
+			}
+		}
+#endif
+
+		oldlen = newlen;
+
 		arg = va_arg(args, char*);
 	}
 	va_end(args);
