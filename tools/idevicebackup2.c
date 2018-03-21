@@ -186,7 +186,13 @@ static int mkdir_with_parents(const char *dir, int mode)
 	if (__mkdir(dir, mode) == 0) {
 		return 0;
 	} else {
+#if WIN32
+		int lastError = GetLastError();
+		
+		if (lastError == ERROR_ALREADY_EXISTS || lastError == ERROR_SUCCESS) return 0;
+#else
 		if (errno == EEXIST) return 0;
+#endif
 	}
 	int res;
 	char *parent = strdup(dir);
@@ -1944,8 +1950,20 @@ checkpoint:
 
 			/* make sure backup device sub-directory exists */
 			char* devbackupdir = string_build_path(backup_directory, source_udid, NULL);
-			__mkdir(devbackupdir, 0755);
+			result_code = __mkdir(devbackupdir, 0755);
 			free(devbackupdir);
+
+			if (result_code != 0) {
+#ifdef WIN32
+				if (GetLastError() != ERROR_ALREADY_EXISTS) {
+#else
+				if (errno != EEXIST) {
+#endif
+					printf("Error creating the backup directory, error code\n");
+					cmd = CMD_LEAVE;
+					break;
+				}
+			}
 
 			if (strcmp(source_udid, udid) != 0) {
 				/* handle different source backup directory */
