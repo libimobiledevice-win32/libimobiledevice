@@ -34,8 +34,13 @@
 #ifndef WIN32
 #include <pwd.h>
 #endif
-#include <unistd.h>
+
 #include <usbmuxd.h>
+
+#ifdef _MSC_VER
+#include "windows.h"
+#endif
+
 #ifdef HAVE_OPENSSL
 #include <openssl/bn.h>
 #include <openssl/pem.h>
@@ -56,7 +61,7 @@
 #endif
 
 #include <dirent.h>
-#include <libgen.h>
+// #include <libgen.h>
 #include <sys/stat.h>
 #include <errno.h>
 

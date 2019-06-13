@@ -30,8 +30,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#ifndef _MSC_VER
 #include <unistd.h>
-#include <libgen.h>
+#endif
 
 #ifdef WIN32
 #include <windows.h>

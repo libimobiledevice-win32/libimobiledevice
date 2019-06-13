@@ -32,7 +32,6 @@
 #define __USE_GNU 1
 #include <stdio.h>
 #include <ctype.h>
-#include <unistd.h>
 #include <plist/plist.h>
 
 #include "property_list_service.h"
