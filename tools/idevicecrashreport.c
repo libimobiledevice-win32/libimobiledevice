@@ -29,7 +29,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef _MSC_VER
+#include <direct.h>
+#else
 #include <unistd.h>
+#endif
 #ifndef WIN32
 #include <signal.h>
 #endif
@@ -227,7 +231,7 @@ static int afc_client_copy_and_remove_crash_reports(afc_client_t afc, const char
 		/* recurse into child directories */
 		if (S_ISDIR(stbuf.st_mode)) {
 #ifdef WIN32
-			mkdir(target_filename);
+			_mkdir(target_filename);
 #else
 			mkdir(target_filename, 0755);
 #endif
