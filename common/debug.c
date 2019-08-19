@@ -153,7 +153,7 @@ void debug_buffer(const char *data, const int length)
 
 			if (!cb)
 			{
-				fprintf("%s", line);
+				fprintf(stderr, "%s", line);
 			}
 			else
 			{
