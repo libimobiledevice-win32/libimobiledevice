@@ -1,0 +1,60 @@
+configurations {
+    Toolset { 
+        key : "PlatformToolset"; 
+        choices: { v140 };  
+        // Explicitly Not including pivot variants:  "WindowsKernelModeDriver8.0", "WindowsApplicationForDrivers8.0", "WindowsUserModeDriver8.0" 
+
+        // We're normalizing out the concept of the v140 platform -- Overloading the $(PlatformToolset) variable for additional pivots was a dumb idea.
+        v140.condition = "( $(PlatformToolset.ToLower().IndexOf('v140')) > -1 Or '$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0' Or '$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0' Or '$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0' )";
+    };
+}
+
+nuget{
+    nuspec{
+        id = libimobiledevice;
+        version : 1.2.1.{build};
+        title: libimobiledevice;
+        authors: {libimobiledevice Project};
+        owners: {quamotion};
+        licenseUrl: "http://opensource.org/licenses/LGPL-2.1";
+        projectUrl: "http://www.libimobiledevice.org/";
+        iconUrl: "http://www.nuget.org/Content/Images/packageDefaultIcon-50x50.png";
+        requireLicenseAcceptance:false;
+        description: "A library to communicate with services of Apple iOS devices using native protocols.";
+        summary: "A library to communicate with services of Apple iOS devices using native protocols.";
+        copyright: "https://github.com/libimobiledevice/libimobiledevice/blob/master/AUTHORS";
+        releaseNotes: "Release 1.2.0 of libimobiledevice. See https://github.com/libimobiledevice-win32/libimobiledevice/tree/msvc-1.2.0 for more.";
+        tags: { libimobiledevice, native };
+    }
+
+    files{
+	includeplist: {
+		#destination = ${d_include}libimobiledevice;
+		"include\libimobiledevice\*.h";
+	} 
+
+	[x86,v140,debug] {
+            lib: Win32\Debug\imobiledevice.lib;
+            bin: { "Win32\Debug\imobiledevice.dll", "Win32\Debug\*.exe" };
+            symbols: Win32\Debug\imobiledevice.pdb;
+        }
+
+	[x86,v140,release] {
+            lib: Win32\Release\imobiledevice.lib;
+            bin: { "Win32\Release\imobiledevice.dll", "Win32\Release\*.exe" };
+            symbols: Win32\Release\imobiledevice.pdb;
+        }
+
+	[x64,v140,debug] {
+            lib: x64\Debug\imobiledevice.lib;
+            bin: { "x64\Debug\imobiledevice.dll", "x64\Debug\*.exe" };
+            symbols: x64\Debug\imobiledevice.pdb;
+        }
+
+	[x64,v140,release] {
+            lib: x64\Release\imobiledevice.lib;
+            bin: { "x64\Release\imobiledevice.dll", "x64\Release\*.exe" };
+            symbols: x64\Release\imobiledevice.pdb;
+        }
+    }
+}

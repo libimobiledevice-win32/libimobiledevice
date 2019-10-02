@@ -24,6 +24,10 @@
 #include <config.h>
 #endif
 
+#ifdef _MSC_VER
+#include "src\msc_config.h"
+#endif
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -42,16 +46,10 @@
 #endif
 
 #ifdef HAVE_OPENSSL
-#include <openssl/bn.h>
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
 #include <openssl/x509.h>
 #include <openssl/x509v3.h>
-#if OPENSSL_VERSION_NUMBER < 0x1010000fL || \
-	(defined(LIBRESSL_VERSION_NUMBER) && (LIBRESSL_VERSION_NUMBER < 0x20700000L))
-#define X509_set1_notBefore X509_set_notBefore
-#define X509_set1_notAfter X509_set_notAfter
-#endif
 #else
 #include <gnutls/gnutls.h>
 #include <gnutls/crypto.h>
@@ -61,7 +59,11 @@
 #endif
 
 #include <dirent.h>
-// #include <libgen.h>
+#ifdef _MSC_VER
+#include "libgen.h"
+#else
+#include <libgen.h>
+#endif
 #include <sys/stat.h>
 #include <errno.h>
 
@@ -431,9 +433,9 @@ userpref_error_t pair_record_generate_keys_and_certs(plist_t pair_record, key_da
 		/* set key validity */
 		ASN1_TIME* asn1time = ASN1_TIME_new();
 		ASN1_TIME_set(asn1time, time(NULL));
-		X509_set1_notBefore(root_cert, asn1time);
+		X509_set_notBefore(root_cert, asn1time);
 		ASN1_TIME_set(asn1time, time(NULL) + (60 * 60 * 24 * 365 * 10));
-		X509_set1_notAfter(root_cert, asn1time);
+		X509_set_notAfter(root_cert, asn1time);
 		ASN1_TIME_free(asn1time);
 
 		/* use root public key for root cert */
@@ -464,9 +466,9 @@ userpref_error_t pair_record_generate_keys_and_certs(plist_t pair_record, key_da
 		/* set key validity */
 		ASN1_TIME* asn1time = ASN1_TIME_new();
 		ASN1_TIME_set(asn1time, time(NULL));
-		X509_set1_notBefore(host_cert, asn1time);
+		X509_set_notBefore(host_cert, asn1time);
 		ASN1_TIME_set(asn1time, time(NULL) + (60 * 60 * 24 * 365 * 10));
-		X509_set1_notAfter(host_cert, asn1time);
+		X509_set_notAfter(host_cert, asn1time);
 		ASN1_TIME_free(asn1time);
 
 		/* use host public key for host cert */
@@ -544,9 +546,9 @@ userpref_error_t pair_record_generate_keys_and_certs(plist_t pair_record, key_da
 
 		ASN1_TIME* asn1time = ASN1_TIME_new();
 		ASN1_TIME_set(asn1time, time(NULL));
-		X509_set1_notBefore(dev_cert, asn1time);
+		X509_set_notBefore(dev_cert, asn1time);
 		ASN1_TIME_set(asn1time, time(NULL) + (60 * 60 * 24 * 365 * 10));
-		X509_set1_notAfter(dev_cert, asn1time);
+		X509_set_notAfter(dev_cert, asn1time);
 		ASN1_TIME_free(asn1time);
 
 		EVP_PKEY* pkey = EVP_PKEY_new();

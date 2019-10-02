@@ -26,6 +26,10 @@
 #include <config.h>
 #endif
 
+#ifdef _MSC_VER
+#include "msc_config.h"
+#endif
+
 #include <string.h>
 #include <stdlib.h>
 #define _GNU_SOURCE 1
@@ -54,6 +58,10 @@
 #ifdef WIN32
 #include <windows.h>
 #define sleep(x) Sleep(x*1000)
+#endif
+
+#ifdef _MSC_VER
+#include "src\msc_compat.h"
 #endif
 
 /**
@@ -218,7 +226,7 @@ static lockdownd_error_t lockdown_check_result(plist_t dict, const char *query_m
 					ret = lockdownd_strtoerr(err_value);
 					free(err_value);
 				} else {
-					debug_info("ERROR: unknown error occurred");
+					debug_info("ERROR: unknown error occured");
 				}
 			}
 			return ret;
@@ -714,7 +722,7 @@ LIBIMOBILEDEVICE_API lockdownd_error_t lockdownd_client_new_with_handshake(idevi
 			char *s_version = NULL;
 			plist_get_string_val(p_version, &s_version);
 			if (s_version && sscanf(s_version, "%d.%d.%d", &vers[0], &vers[1], &vers[2]) >= 2) {
-				device->version = DEVICE_VERSION(vers[0], vers[1], vers[2]);
+				device->version = ((vers[0] & 0xFF) << 16) | ((vers[1] & 0xFF) << 8) | (vers[2] & 0xFF);
 			}
 			free(s_version);
 		}
@@ -737,7 +745,7 @@ LIBIMOBILEDEVICE_API lockdownd_error_t lockdownd_client_new_with_handshake(idevi
 	plist_free(pair_record);
 	pair_record = NULL;
 
-	if (device->version < DEVICE_VERSION(7,0,0)) {
+	if (device->version < 0x070000) {
 		/* for older devices, we need to validate pairing to receive trusted host status */
 		ret = lockdownd_validate_pair(client_loc, NULL);
 

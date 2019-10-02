@@ -27,7 +27,7 @@
 #include "libimobiledevice/libimobiledevice.h"
 
 /** Enables calling applications to capture debug messages from libimobiledevice */
-typedef void(*idevice_debug_cb_t) (char *message);
+typedef void(*idevice_debug_cb_t) (const char *message);
 void internal_set_debug_callback(idevice_debug_cb_t callback);
 
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L && !defined(STRIP_DEBUG_CODE)

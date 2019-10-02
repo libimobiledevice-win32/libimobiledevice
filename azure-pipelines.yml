@@ -1,61 +1,205 @@
+variables:
+  libplistBuild: 281
+  libplistPipeline: 2
+  libusbmuxdBuild: 303
+  libusbmuxdPipeline: 3
 jobs:
+- job: windows
+  strategy:
+    maxParallel: 2
+    matrix:
+      x64:
+        BUILD_ARCH: x64
+        PLATFORM: x64
+        RID: win7-x64
+      x86:
+        BUILD_ARCH: x86
+        PLATFORM: Win32
+        RID: win7-x86
+  pool:
+    vmImage: 'vs2017-win2016'
+  steps:
+  - script: |
+      git clone https://github.com/libimobiledevice-win32/vcpkg
+      vcpkg\bootstrap-vcpkg.bat
+    displayName: Install vcpkg
+  - script: |
+      vcpkg\vcpkg version
+      vcpkg\vcpkg integrate install
+      set VCPKG_BUILD_TYPE=release
+      vcpkg\vcpkg install zlib:%BUILD_ARCH%-windows openssl:%BUILD_ARCH%-windows dirent:%BUILD_ARCH%-windows getopt:%BUILD_ARCH%-windows
+      vcpkg\vcpkg install libplist:%BUILD_ARCH%-windows libusbmuxd:%BUILD_ARCH%-windows --head
+    displayName: Install native dependencies
+  - powershell: |
+      (Get-Content Resource.rc -Raw) | Foreach-Object {$_ -replace "(?<version>\d[,|\.]\d[,|\.]\d[,|\.])\d", "`${version}$env:BUILD_BUILDID" } | Set-Content Resource.rc
+    displayName: Update version number
+  - task: MSBuild@1
+    inputs:
+      solution: 'libimobiledevice.sln' 
+      platform: $(PLATFORM)
+      configuration: Release
+    displayName: 'Release build'
+  - task: MSBuild@1
+    inputs:
+      solution: 'libimobiledevice.sln' 
+      platform: $(PLATFORM)
+      configuration: Debug
+    displayName: 'Debug build'
+  - script: |
+      mkdir %BUILD_ARTIFACTSTAGINGDIRECTORY%\libimobiledevice\%RID%\bin\
+      mkdir %BUILD_ARTIFACTSTAGINGDIRECTORY%\libimobiledevice\%RID%\licenses\
+      copy %PLATFORM%\Release\imobiledevice.dll %BUILD_ARTIFACTSTAGINGDIRECTORY%\libimobiledevice\%RID%\bin\
+      copy %PLATFORM%\Release\*.exe %BUILD_ARTIFACTSTAGINGDIRECTORY%\libimobiledevice\%RID%\bin\
+      copy vcpkg\installed\%BUILD_ARCH%-windows\bin\*.dll %BUILD_ARTIFACTSTAGINGDIRECTORY%\libimobiledevice\%RID%\bin\
+      copy vcpkg\installed\%BUILD_ARCH%-windows\share\getopt-win32\copyright %BUILD_ARTIFACTSTAGINGDIRECTORY%\libimobiledevice\%RID%\licenses\getopt.copyright
+      copy vcpkg\installed\%BUILD_ARCH%-windows\share\openssl-windows\copyright %BUILD_ARTIFACTSTAGINGDIRECTORY%\libimobiledevice\%RID%\licenses\openssl.copyright
+      copy vcpkg\installed\%BUILD_ARCH%-windows\share\libplist\copyright %BUILD_ARTIFACTSTAGINGDIRECTORY%\libimobiledevice\%RID%\licenses\libplist.copyright
+      copy vcpkg\installed\%BUILD_ARCH%-windows\share\libusbmuxd\copyright %BUILD_ARTIFACTSTAGINGDIRECTORY%\libimobiledevice\%RID%\licenses\libusbmuxd.copyright
+      copy vcpkg\installed\%BUILD_ARCH%-windows\share\zlib\copyright %BUILD_ARTIFACTSTAGINGDIRECTORY%\libimobiledevice\%RID%\licenses\zlib.copyright
+      copy vcpkg\installed\%BUILD_ARCH%-windows\tools\libplist\*.exe %BUILD_ARTIFACTSTAGINGDIRECTORY%\libimobiledevice\%RID%\bin\
+      copy vcpkg\installed\%BUILD_ARCH%-windows\tools\libusbmuxd\*.exe %BUILD_ARTIFACTSTAGINGDIRECTORY%\libimobiledevice\%RID%\bin\
+    displayName: 'Install'
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)/libimobiledevice/' 
+      artifactName: 'libimobiledevice' 
+      publishLocation: 'Container'
+    displayName: Publish
+
 - job: macos
   pool:
     vmImage: 'xcode9-macos10.13'
   variables:
     TARGET: x86_64-apple-darwin
+    RID: osx-x64
   steps:
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      buildType: 'specific'
+      project: 'imobiledevice-net'
+      pipeline: $(libplistPipeline)
+      buildVersionToDownload: 'specific'
+      buildId: $(libplistBuild)
+      downloadType: 'single'
+      artifactName: 'libplist'
+      downloadPath: '$(System.ArtifactsDirectory)'
+    displayName: 'Download libplist artifacts'
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      buildType: 'specific'
+      project: 'imobiledevice-net'
+      pipeline: $(libusbmuxdPipeline)
+      buildVersionToDownload: 'specific'
+      buildId: $(libusbmuxdBuild)
+      downloadType: 'single'
+      artifactName: 'libusbmuxd'
+      downloadPath: '$(System.ArtifactsDirectory)'
+    displayName: 'Download libusbmuxd artifacts'
   - script: |
-      brew install autoconf automake libtool pkg-config
-    displayName: Install autotools
+      brew install autoconf automake libtool pkg-config openssl
+    displayName: Install autotools, openSSL
   - script: |
-      brew install --HEAD libplist
-    displayName: Install libplist
-  - script: |
-      git clone --single-branch --branch msvc/master https://github.com/libimobiledevice-win32/libusbmuxd
-      cd libusbmuxd
-      ./autogen.sh --host=$TARGET --without-cython --enable-static=no --enable-shared=yes
-      make
-      make install
-    displayName: Install libusbmuxd (from source)
-  - script: |
+      # Patch the pkg-config files. The path to the artifacts directory includes the version number of the
+      # VSTS agent, which may change.
+      LC_CTYPE=C LANG=C find $SYSTEM_ARTIFACTSDIRECTORY/libplist/$RID/lib/pkgconfig -name '*.pc' -print0 | xargs -0 sed -i -e "s@/Users/vsts/agent/[0-9]*\.[0-9]*\.[0-9]*/work/1/a/@$BUILD_ARTIFACTSTAGINGDIRECTORY/@g"
+      LC_CTYPE=C LANG=C find $SYSTEM_ARTIFACTSDIRECTORY/libusbmuxd/$RID/lib/pkgconfig -name '*.pc' -print0 | xargs -0 sed -i -e "s@/Users/vsts/agent/[0-9]*\.[0-9]*\.[0-9]*/work/1/a/@$BUILD_ARTIFACTSTAGINGDIRECTORY/@g"
+
+      LC_CTYPE=C LANG=C find $SYSTEM_ARTIFACTSDIRECTORY/libplist/$RID/lib/ -name '*.la' -print0 | xargs -0 sed -i -e "s@/Users/vsts/agent/[0-9]*\.[0-9]*\.[0-9]*/work/1/a/@$BUILD_ARTIFACTSTAGINGDIRECTORY/@g"
+      LC_CTYPE=C LANG=C find $SYSTEM_ARTIFACTSDIRECTORY/libusbmuxd/$RID/lib/ -name '*.la' -print0 | xargs -0 sed -i -e "s@/Users/vsts/agent/[0-9]*\.[0-9]*\.[0-9]*/work/1/a/@$BUILD_ARTIFACTSTAGINGDIRECTORY/@g"
+
+      export PKG_CONFIG_PATH="$SYSTEM_ARTIFACTSDIRECTORY/libplist/$RID/lib/pkgconfig:$PKG_CONFIG_PATH"
+      export PKG_CONFIG_PATH="$SYSTEM_ARTIFACTSDIRECTORY/libusbmuxd/$RID/lib/pkgconfig:$PKG_CONFIG_PATH"
       export PKG_CONFIG_PATH="$(brew --prefix)/opt/openssl/lib/pkgconfig:$PKG_CONFIG_PATH"
-      ./autogen.sh --host=$TARGET --without-cython --enable-static=no --enable-shared=yes
+
+      pkg-config --variable=prefix libplist
+      pkg-config --variable=prefix libusbmuxd
+
+      pkg-config --define-prefix --variable=prefix libplist
+      pkg-config --define-prefix --variable=prefix libusbmuxd
+
+      ./autogen.sh --prefix=$BUILD_ARTIFACTSTAGINGDIRECTORY/libimobiledevice/$RID --host=$TARGET --without-cython --enable-static=no --enable-shared=yes --enable-openssl
       make
     displayName: Build
   - script: |
-      make check
-    displayName: Test
+      make install
+      cp /usr/local/opt/openssl/lib/libssl.1.0.0.dylib $SYSTEM_ARTIFACTSDIRECTORY/libimobiledevice/$RID/lib
+      cp /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib $SYSTEM_ARTIFACTSDIRECTORY/libimobiledevice/$RID/lib
+
+      export INSTALLDIR=$SYSTEM_ARTIFACTSDIRECTORY/libimobiledevice/$RID
+      ./build/patchdylib.sh
+
+      echo $BUILD_REPOSITORY_URI\n >> $BUILD_ARTIFACTSTAGINGDIRECTORY/libimobiledevice/$RID/gitinfo
+      echo $BUILD_SOURCEVERSION >> $BUILD_ARTIFACTSTAGINGDIRECTORY/libimobiledevice/$RID/gitinfo
+    displayName: Install
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)/libimobiledevice' 
+      artifactName: 'libimobiledevice' 
+      publishLocation: 'Container'
+    displayName: Publish
 
 - job: linux
-  pool:
-    vmImage: 'ubuntu-16.04'
   variables:
     TARGET: x86_64-unknown-linux-gnu
+    RID: ubuntu.16.04-x64
     CFLAGS: -fPIC
-  container:
-    image: ubuntu:18.04
-    options: "--name ci-container -v /usr/bin/docker:/tmp/docker:ro"
+  pool:
+    vmImage: 'ubuntu-16.04'
   steps:
   - script: |
-      /tmp/docker exec -t -u 0 ci-container \
-      sh -c "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confold" -y install sudo"
-    displayName: Set up sudo
-  - script: |
+      lsb_release -a
+      sudo apt-get remove -y libssl1.1 ant
+      sudo apt-get install -y software-properties-common
+      sudo add-apt-repository --remove -y ppa:ondrej/php
       sudo apt-get update
-      sudo apt-get upgrade -y
-      sudo apt-get install -y --no-install-recommends lsb-release automake make libtool clang libssl-dev gnupg pkg-config libzip-dev
-    displayName: Install build dependencies
+    displayName: Check Ubuntu version, remove non-standard libssl1.1
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      buildType: 'specific'
+      project: 'imobiledevice-net'
+      pipeline: $(libusbmuxdPipeline)
+      buildVersionToDownload: 'specific'
+      buildId: $(libusbmuxdBuild)
+      downloadType: 'single'
+      artifactName: 'libusbmuxd'
+      downloadPath: '$(System.ArtifactsDirectory)'
+    displayName: 'Download libusbmuxd artifacts'
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      buildType: 'specific'
+      project: 'imobiledevice-net'
+      pipeline: $(libplistPipeline)
+      buildVersionToDownload: 'specific'
+      buildId: $(libplistBuild)
+      downloadType: 'single'
+      artifactName: 'libplist'
+      downloadPath: '$(System.ArtifactsDirectory)'
+    displayName: 'Download libplist artifacts'
   - script: |
-      echo "deb http://ppa.launchpad.net/quamotion/ppa/ubuntu bionic main" | sudo tee -a  /etc/apt/sources.list.d/quamotion.list
-      sudo apt-key adv --keyserver keyserver.ubuntu.com --recv E25E7A74
-      sudo apt-get update
-      sudo apt-get install -y --no-install-recommends libplist-dev libplist++-dev libusbmuxd-dev
-    displayName: Install libplist, libusbmuxd
+      sudo apt-get install -y libssl-dev
+    displayName: Install autotools, openSSL
   - script: |
-      ./autogen.sh --host=$TARGET --without-cython --enable-static=no --enable-shared=yes
+      export PKG_CONFIG_PATH="$SYSTEM_ARTIFACTSDIRECTORY/libplist/$RID/lib/pkgconfig:$PKG_CONFIG_PATH"
+      export PKG_CONFIG_PATH="$SYSTEM_ARTIFACTSDIRECTORY/libusbmuxd/$RID/lib/pkgconfig:$PKG_CONFIG_PATH"
+
+      ./autogen.sh --prefix=$BUILD_ARTIFACTSTAGINGDIRECTORY/libimobiledevice/$RID --host=$TARGET --without-cython --enable-static=no --enable-shared=yes --enable-openssl
       make
     displayName: Build
   - script: |
-      make check
-    displayName: Test
+      make install
+      export INSTALLDIR=$SYSTEM_ARTIFACTSDIRECTORY/libimobiledevice/$RID
+      ./build/install-patchelf.sh
+      ./build/run-patchelf.sh
+
+      echo $BUILD_REPOSITORY_URI\n >> $BUILD_ARTIFACTSTAGINGDIRECTORY/libimobiledevice/$RID/gitinfo
+      echo $BUILD_SOURCEVERSION >> $BUILD_ARTIFACTSTAGINGDIRECTORY/libimobiledevice/$RID/gitinfo
+    displayName: Install
+  - script: |
+      git archive --format tar.gz -o $BUILD_ARTIFACTSTAGINGDIRECTORY/libimobiledevice/libimobiledevice.orig.tar.gz $BUILD_SOURCEVERSION
+    displayName: Build source tarball
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)/libimobiledevice'
+      artifactName: 'libimobiledevice' 
+      publishLocation: 'Container'
+    displayName: Publish

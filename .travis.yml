@@ -1,0 +1,83 @@
+dist: trusty
+osx_image: xcode9.2
+
+matrix:
+  include:
+    - os: osx
+      env: TARGET=x86_64-apple-darwin RID=osx-x64 RUN_TESTS=yes CROSS=no CREATE_DEB=no
+    - os: linux
+      env: TARGET=x86_64-linux-gnu RID=linux-x64 RUN_TESTS=yes CROSS=no CREATE_DEB=yes
+
+language: c
+
+env:
+  global:
+  - LIBPLIST_VERSION=2.0.1-157
+  - LIBUSBMUXD_VERSION=1.1.0-87
+  - CFLAGS=-fPIC
+  - LIBIMOBILEDEVICE_VERSION_PREFIX=1.2.1
+
+addons:
+  apt:
+    packages:
+    - devscripts
+    - debhelper
+    - dh-autoreconf
+    - dput
+    - osc
+    - fakeroot
+
+before_install:
+- test -n $CC && unset CC
+
+install:
+- if [ "$TRAVIS_OS_NAME" = "osx" ]; then pip2 install --user azure-cli; fi
+- if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update; fi
+- if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install openssl; fi
+- if [ "$TRAVIS_OS_NAME" = "linux" ]; then pip install --user requests urllib3 pyOpenSSL --force --upgrade; fi
+- if [ "$TRAVIS_OS_NAME" = "linux" ]; then pip install --user azure-cli; fi
+- if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./build/install-patchelf.sh; fi
+
+before_script:
+- wget https://qmcdn.blob.core.windows.net/imobiledevice/libplist-$RID-$LIBPLIST_VERSION.tar.gz
+- wget https://qmcdn.blob.core.windows.net/imobiledevice/libusbmuxd-$RID-$LIBUSBMUXD_VERSION.tar.gz
+- mkdir $HOME/ext
+- tar -xvzf libplist-$RID-$LIBPLIST_VERSION.tar.gz -C $HOME/ext
+- tar -xvzf libusbmuxd-$RID-$LIBUSBMUXD_VERSION.tar.gz -C $HOME/ext
+- find $HOME/ext
+- LC_CTYPE=C LANG=C find $HOME/ext/lib/pkgconfig/ -name '*.pc' -print0 | xargs -0 sed -i -e 's@/travis/out@/travis/ext@g'
+- LC_CTYPE=C LANG=C find $HOME/ext/lib/ -name '*.la' -print0 | xargs -0 sed -i -e 's@/travis/out@/travis/ext@g'
+
+script:
+- export CFLAGS="$CFLAGS -I$HOME/ext/include"
+- export PKG_CONFIG_PATH=$HOME/ext/lib/pkgconfig:$PKG_CONFIG_PATH
+- export LDFLAGS="$LDFLAGS -L$HOME/ext/lib"
+- if [ "$TRAVIS_OS_NAME" = "osx" ]; then export CFLAGS="$CFLAGS -I/usr/local/opt/openssl/include"; fi
+- if [ "$TRAVIS_OS_NAME" = "osx" ]; then export LDFLAGS="$LDFLAGS -L/usr/local/opt/openssl/lib"; fi
+- pkg-config --print-errors --variable=prefix libplist
+- pkg-config --print-errors --variable=prefix libusbmuxd
+- ./autogen.sh --prefix=$HOME/out --host=$TARGET --without-cython --enable-static=no --enable-shared=yes --enable-openssl
+- make
+
+after_success:
+- make install
+- if [ "$TRAVIS_OS_NAME" = "osx" ]; then cp /usr/local/opt/openssl/lib/libssl.1.0.0.dylib $HOME/out/lib; fi
+- if [ "$TRAVIS_OS_NAME" = "osx" ]; then cp /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib $HOME/out/lib; fi
+- if [ "$TRAVIS_OS_NAME" = "osx" ]; then chmod +rw $HOME/out/lib/libssl.1.0.0.dylib; fi
+- if [ "$TRAVIS_OS_NAME" = "osx" ]; then chmod +rw $HOME/out/lib/libcrypto.1.0.0.dylib; fi
+- cp $HOME/ext/bin/* $HOME/out/bin/
+- export INSTALLDIR=$HOME/out
+- if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./build/run-patchelf.sh; fi
+- if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./build/patchdylib.sh; fi
+- tar -zcvf libimobiledevice-$RID.tar.gz -C $HOME/out .
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then az=$HOME/Library/Python/2.7/bin/az; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then az=$HOME/.local/bin/az; fi
+- $az storage blob upload --file libimobiledevice-$RID.tar.gz --container-name imobiledevice --name libimobiledevice-$RID-1.2.1-$TRAVIS_BUILD_NUMBER.tar.gz
+- if [[ "$CREATE_DEB" == "yes" ]]; then ./make-deb.sh bionic; fi
+- if [[ "$CREATE_DEB" == "yes" ]]; then ./make-deb.sh precise; fi
+- if [[ "$CREATE_DEB" == "yes" ]]; then ./make-deb.sh trusty; fi
+- if [[ "$CREATE_DEB" == "yes" ]]; then ./make-deb.sh xenial; fi
+- if [[ "$CREATE_DEB" == "yes" ]]; then ./make-rpm.sh; fi
+
+after_failure:
+- cat config.log

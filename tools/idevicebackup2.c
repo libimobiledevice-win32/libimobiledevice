@@ -24,6 +24,10 @@
 #include <config.h>
 #endif
 
+#ifdef _MSC_VER
+//#include <config_msvc.h>
+#endif
+
 #ifdef WIN32
 #include <windows.h>
 #endif
@@ -33,11 +37,11 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <signal.h>
-#ifndef _MSC_VER	
-#include <unistd.h>	
+#ifndef _MSC_VER
+#include <unistd.h>
 #endif
 #include <dirent.h>
-#include <libgen.h>
+#include <libgen.h> 
 #include <ctype.h>
 #include <time.h>
 
@@ -205,7 +209,7 @@ static int mkdir_with_parents(const char *dir, int mode)
 #endif
 	}
 	int res;
-	char *parent = strdup(dir);
+	char *parent = _strdup(dir);
 	char *parentdir = dirname(parent);
 	if (parentdir) {
 		res = mkdir_with_parents(parentdir, mode);
@@ -316,7 +320,7 @@ static int rmdir_recursive(const char* path)
 
 	ent = malloc(sizeof(struct entry));
 	if (!ent) return ENOMEM;
-	ent->name = strdup(path);
+	ent->name = _strdup(path);
 	ent->next = NULL;
 	directories = ent;
 
@@ -1028,8 +1032,6 @@ static int mb2_handle_receive_files(mobilebackup2_client_t mobilebackup2, plist_
 	plist_t node = NULL;
 	FILE *f = NULL;
 	unsigned int file_count = 0;
-	int errcode = 0;
-	char *errdesc = NULL;
 
 	if (!message || (plist_get_node_type(message) != PLIST_ARRAY) || plist_array_get_size(message) < 4 || !backup_dir) return 0;
 
@@ -1131,10 +1133,7 @@ static int mb2_handle_receive_files(mobilebackup2_client_t mobilebackup2, plist_
 			fclose(f);
 			file_count++;
 		} else {
-			errcode = errno_to_device_error(errno);
-			errdesc = strerror(errno);
-			printf("Error opening '%s' for writing: %s\n", bname, errdesc);
-			break;
+			printf("Error opening '%s' for writing: %s\n", bname, strerror(errno));
 		}
 		if (nlen == 0) {
 			break;
@@ -1173,8 +1172,9 @@ static int mb2_handle_receive_files(mobilebackup2_client_t mobilebackup2, plist_
 	if (dname != NULL)
 		free(dname);
 
+	// TODO error handling?!
 	plist_t empty_plist = plist_new_dict();
-	mobilebackup2_send_status_response(mobilebackup2, errcode, errdesc, empty_plist);
+	mobilebackup2_send_status_response(mobilebackup2, 0, NULL, empty_plist);
 	plist_free(empty_plist);
 
 	return file_count;
@@ -1348,7 +1348,7 @@ static void mb2_copy_directory_by_path(const char *src, const char *dst)
 
 #ifdef WIN32
 #define BS_CC '\b'
-#define my_getch getch
+#define my_getch _getch
 #else
 #define BS_CC 0x7f
 static int my_getch(void)
@@ -1409,7 +1409,7 @@ static char* ask_for_password(const char* msg, int type_again)
 			return NULL;
 		}
 	}
-	return strdup(pwbuf);
+	return _strdup(pwbuf);
 }
 
 /**
@@ -1454,11 +1454,12 @@ static void print_usage(int argc, char **argv)
 	printf("  -i, --interactive\trequest passwords interactively\n");
 	printf("  -h, --help\t\tprints usage information\n");
 	printf("\n");
-	printf("Homepage: <" PACKAGE_URL ">\n");
+	//printf("Homepage: <" PACKAGE_URL ">\n");
 }
 
 int main(int argc, char *argv[])
 {
+	printf("JJJJJ!");
 	idevice_error_t ret = IDEVICE_E_UNKNOWN_ERROR;
 	lockdownd_error_t ldret = LOCKDOWN_E_UNKNOWN_ERROR;
 	int i;
@@ -1486,7 +1487,6 @@ int main(int argc, char *argv[])
 	signal(SIGQUIT, clean_exit);
 	signal(SIGPIPE, SIG_IGN);
 #endif
-
 	/* parse cmdline args */
 	for (i = 1; i < argc; i++) {
 		if (!strcmp(argv[i], "-d") || !strcmp(argv[i], "--debug")) {
@@ -1499,7 +1499,7 @@ int main(int argc, char *argv[])
 				print_usage(argc, argv);
 				return -1;
 			}
-			udid = strdup(argv[i]);
+			udid = _strdup(argv[i]);
 			continue;
 		}
 		else if (!strcmp(argv[i], "-s") || !strcmp(argv[i], "--source")) {
@@ -1508,7 +1508,7 @@ int main(int argc, char *argv[])
 				print_usage(argc, argv);
 				return -1;
 			}
-			source_udid = strdup(argv[i]);
+			source_udid = _strdup(argv[i]);
 			continue;
 		}
 		else if (!strcmp(argv[i], "-i") || !strcmp(argv[i], "--interactive")) {
@@ -1554,7 +1554,7 @@ int main(int argc, char *argv[])
 			}
 			if (backup_password)
 				free(backup_password);
-			backup_password = strdup(argv[i]);
+			backup_password = _strdup(argv[i]);
 			continue;
 		}
 		else if (!strcmp(argv[i], "cloud")) {
@@ -1615,9 +1615,9 @@ int main(int argc, char *argv[])
 			i++;
 			if (argv[i]) {
 				if (cmd_flags & CMD_FLAG_ENCRYPTION_ENABLE) {
-					newpw = strdup(argv[i]);
+					newpw = _strdup(argv[i]);
 				} else if (cmd_flags & CMD_FLAG_ENCRYPTION_DISABLE) {
-					backup_password = strdup(argv[i]);
+					backup_password = _strdup(argv[i]);
 				}
 			}
 			continue;
@@ -1636,14 +1636,14 @@ int main(int argc, char *argv[])
 			}
 			i++;
 			if (argv[i]) {
-				backup_password = strdup(argv[i]);
+				backup_password = _strdup(argv[i]);
 				i++;
 				if (!argv[i]) {
 					printf("Old and new passwords have to be passed as arguments for the changepw command\n");
 					print_usage(argc, argv);
 					return -1;
 				}
-				newpw = strdup(argv[i]);
+				newpw = _strdup(argv[i]);
 			}
 			continue;
 		}
@@ -1698,7 +1698,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (!source_udid) {
-		source_udid = strdup(udid);
+		source_udid = _strdup(udid);
 	}
 
 	uint8_t is_encrypted = 0;
@@ -1762,14 +1762,14 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
-
+	printf("\n Jack before lockdonw");
 	lockdownd_client_t lockdown = NULL;
 	if (LOCKDOWN_E_SUCCESS != (ldret = lockdownd_client_new_with_handshake(device, &lockdown, "idevicebackup2"))) {
 		printf("ERROR: Could not connect to lockdownd, error code %d\n", ldret);
 		idevice_free(device);
 		return -1;
 	}
-
+	printf("\n Jack After lockdonw");
 	uint8_t willEncrypt = 0;
 	node_tmp = NULL;
 	lockdownd_get_value(lockdown, "com.apple.mobile.backup", "WillEncrypt", &node_tmp);
@@ -1820,6 +1820,7 @@ int main(int argc, char *argv[])
 	ldret = lockdownd_start_service_with_escrow_bag(lockdown, MOBILEBACKUP2_SERVICE_NAME, &service);
 	lockdownd_client_free(lockdown);
 	lockdown = NULL;
+	printf("\n Jack before start service");
 	if ((ldret == LOCKDOWN_E_SUCCESS) && service && service->port) {
 		PRINT_VERBOSE(1, "Started \"%s\" service on port %d.\n", MOBILEBACKUP2_SERVICE_NAME, service->port);
 		mobilebackup2_client_new(device, service, &mobilebackup2);
@@ -1990,7 +1991,7 @@ checkpoint:
 				} else if (err == MOBILEBACKUP2_E_REPLY_NOT_OK) {
 					printf("ERROR: Could not start backup process: device refused to start the backup process.\n");
 				} else {
-					printf("ERROR: Could not start backup process: unspecified error occurred\n");
+					printf("ERROR: Could not start backup process: unspecified error occured\n");
 				}
 				cmd = CMD_LEAVE;
 			}
@@ -2048,7 +2049,7 @@ checkpoint:
 				} else if (err == MOBILEBACKUP2_E_REPLY_NOT_OK) {
 					printf("ERROR: Could not start restore process: device refused to start the restore process.\n");
 				} else {
-					printf("ERROR: Could not start restore process: unspecified error occurred\n");
+					printf("ERROR: Could not start restore process: unspecified error occured\n");
 				}
 				cmd = CMD_LEAVE;
 			}

@@ -23,6 +23,11 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
+#ifdef _MSC_VER
+#include "src/msc_config.h"
+#endif
+
 #include <stdarg.h>
 #define _GNU_SOURCE 1
 #define __USE_GNU 1
@@ -66,7 +71,9 @@ static void debug_print_line(const char *func, const char *file, int line, const
 	strftime(str_time, 254, "%H:%M:%S", localtime (&the_time));
 
 	/* generate header text */
-	(void)asprintf(&header, "%s %s:%d %s()", str_time, file, line, func);
+	if(0 > asprintf(&header, "%s %s:%d %s()", str_time, file, line, func)) {
+		return;
+	}
 	free (str_time);
 
 	/* trim ending newlines */
@@ -103,7 +110,9 @@ LIBIMOBILEDEVICE_API_MSC void debug_info_real(const char *func, const char *file
 
 	/* run the real fprintf */
 	va_start(args, format);
-	(void)vasprintf(&buffer, format, args);
+	if (0 > vasprintf(&buffer, format, args)) {
+		return;
+	}
 	va_end(args);
 
 	debug_print_line(func, file, line, buffer);

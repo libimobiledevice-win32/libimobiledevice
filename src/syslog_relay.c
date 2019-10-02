@@ -55,10 +55,6 @@ static syslog_relay_error_t syslog_relay_error(service_error_t err)
 			return SYSLOG_RELAY_E_MUX_ERROR;
 		case SERVICE_E_SSL_ERROR:
 			return SYSLOG_RELAY_E_SSL_ERROR;
-		case SERVICE_E_NOT_ENOUGH_DATA:
-			return SYSLOG_RELAY_E_NOT_ENOUGH_DATA;
-		case SERVICE_E_TIMEOUT:
-			return SYSLOG_RELAY_E_TIMEOUT;
 		default:
 			break;
 	}
@@ -85,7 +81,7 @@ LIBIMOBILEDEVICE_API syslog_relay_error_t syslog_relay_client_new(idevice_t devi
 
 	syslog_relay_client_t client_loc = (syslog_relay_client_t) malloc(sizeof(struct syslog_relay_client_private));
 	client_loc->parent = parent;
-	client_loc->worker = THREAD_T_NULL;
+	client_loc->worker = (thread_t)NULL;
 
 	*client = client_loc;
 
@@ -104,8 +100,15 @@ LIBIMOBILEDEVICE_API syslog_relay_error_t syslog_relay_client_free(syslog_relay_
 {
 	if (!client)
 		return SYSLOG_RELAY_E_INVALID_ARG;
-	syslog_relay_stop_capture(client);
+
 	syslog_relay_error_t err = syslog_relay_error(service_client_free(client->parent));
+	client->parent = NULL;
+	if (client->worker) {
+		debug_info("Joining syslog capture callback worker thread");
+		thread_join(client->worker);
+		thread_free(client->worker);
+		client->worker = (thread_t)NULL;
+	}
 	free(client);
 
 	return err;
@@ -126,7 +129,7 @@ LIBIMOBILEDEVICE_API syslog_relay_error_t syslog_relay_receive_with_timeout(sysl
 	}
 
 	res = syslog_relay_error(service_receive_with_timeout(client->parent, data, size, (uint32_t*)&bytes, timeout));
-	if (res != SYSLOG_RELAY_E_SUCCESS && res != SYSLOG_RELAY_E_TIMEOUT && res != SYSLOG_RELAY_E_NOT_ENOUGH_DATA) {
+	if (bytes <= 0) {
 		debug_info("Could not read data, error %d", res);
 	}
 	if (received) {
@@ -150,7 +153,7 @@ void *syslog_relay_worker(void *arg)
 		char c;
 		uint32_t bytes = 0;
 		ret = syslog_relay_receive_with_timeout(srwt->client, &c, 1, &bytes, 100);
-		if (ret == SYSLOG_RELAY_E_TIMEOUT || ret == SYSLOG_RELAY_E_NOT_ENOUGH_DATA || ((bytes == 0) && (ret == SYSLOG_RELAY_E_SUCCESS))) {
+		if ((bytes == 0) && (ret == SYSLOG_RELAY_E_SUCCESS)) {
 			continue;
 		} else if (ret < 0) {
 			debug_info("Connection to syslog relay interrupted");
@@ -206,7 +209,7 @@ LIBIMOBILEDEVICE_API syslog_relay_error_t syslog_relay_stop_capture(syslog_relay
 		/* join thread to make it exit */
 		thread_join(client->worker);
 		thread_free(client->worker);
-		client->worker = THREAD_T_NULL;
+		client->worker = (thread_t)NULL;
 		client->parent = parent;
 	}
 

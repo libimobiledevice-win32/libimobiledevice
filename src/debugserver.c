@@ -22,6 +22,11 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
+#ifdef _MSC_VER
+#include "msc_config.h"
+#endif
+
 #include <string.h>
 #include <stdlib.h>
 #define _GNU_SOURCE 1
@@ -33,6 +38,10 @@
 #include "common/debug.h"
 #include "common/utils.h"
 #include "asprintf.h"
+
+#ifdef _MSC_VER
+#include "msc_compat.h"
+#endif
 
 /**
  * Convert a service_error_t value to a debugserver_error_t value.
@@ -77,7 +86,6 @@ LIBIMOBILEDEVICE_API debugserver_error_t debugserver_client_new(idevice_t device
 		debug_info("Creating base service client failed. Error: %i", ret);
 		return ret;
 	}
-	service_disable_ssl(parent);
 
 	debugserver_client_t client_loc = (debugserver_client_t) malloc(sizeof(struct debugserver_client_private));
 	client_loc->parent = parent;

@@ -32,6 +32,10 @@
 #define RESULT_SUCCESS 0
 #define RESULT_FAILURE 1
 
+#ifdef _MSC_VER
+#include "msc_compat.h"
+#endif
+
 /**
  * Internally used function for checking the result from restore's answer
  * plist to a previously sent request.
@@ -41,7 +45,7 @@
  *
  * @return RESULT_SUCCESS when the result is 'Success',
  *         RESULT_FAILURE when the result is 'Failure',
- *         or a negative value if an error occurred during evaluation.
+ *         or a negative value if an error occured during evaluation.
  */
 static int restored_check_result(plist_t dict)
 {

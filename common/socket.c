@@ -22,6 +22,9 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#ifdef _MSC_VER
+#include "src\msc_config.h"
+#endif
 
 #include <stdio.h>
 #include <stddef.h>
@@ -420,10 +423,6 @@ int socket_check_fd(int fd, fd_mode fdm, unsigned int timeout)
 							strerror(errno));
 				return -1;
 			}
-		} else if (sret == 0) {
-			if (verbose >= 2)
-				fprintf(stderr, "%s: timeout\n", __func__);
-			return -ETIMEDOUT;
 		}
 	} while (eagain);
 

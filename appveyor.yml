@@ -1,0 +1,20 @@
+environment:
+  VCPKG_ROOT: C:\tools\vcpkg-libimobiledevice
+
+before_build:
+  - vcpkg version
+  - git clone -q --depth 1 -b ports/libimobiledevice https://github.com/libimobiledevice-win32/vcpkg %VCPKG_ROOT%
+  - cmd: "%VCPKG_ROOT%\\bootstrap-vcpkg.bat"
+  - cmd: "%VCPKG_ROOT%\\vcpkg version"
+  - cmd: "%VCPKG_ROOT%\\vcpkg integrate install"
+  - cmd: "%VCPKG_ROOT%\\vcpkg install libplist:x86-windows libusbmuxd:x86-windows zlib:x86-windows openssl:x86-windows dirent:x86-windows getopt:x86-windows"
+  - cmd: "%VCPKG_ROOT%\\vcpkg install libplist:x64-windows libusbmuxd:x64-windows zlib:x64-windows openssl:x64-windows dirent:x64-windows getopt:x64-windows"
+
+  # Update version with build number
+  - ps: (Get-Content Resource.rc -Raw) | Foreach-Object {$_ -replace "(?<version>\d[,|\.]\d[,|\.]\d[,|\.])\d", "`${version}$env:APPVEYOR_BUILD_NUMBER" } | Set-Content Resource.rc
+
+build_script:
+  - msbuild libimobiledevice.sln /p:Configuration=Debug /p:Platform=Win32 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /m
+  - msbuild libimobiledevice.sln /p:Configuration=Release /p:Platform=Win32 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /m
+  - msbuild libimobiledevice.sln /p:Configuration=Debug /p:Platform=x64 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /m
+  - msbuild libimobiledevice.sln /p:Configuration=Release /p:Platform=x64 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /m

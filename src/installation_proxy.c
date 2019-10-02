@@ -20,9 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
+#ifdef _MSC_VER
+#include "msc_config.h"
 #endif
+
 #include <string.h>
 #include <stdlib.h>
 #include <inttypes.h>
@@ -31,6 +32,10 @@
 #include "installation_proxy.h"
 #include "property_list_service.h"
 #include "common/debug.h"
+
+#ifdef _MSC_VER
+#include "msc_compat.h"
+#endif
 
 typedef enum {
 	INSTPROXY_COMMAND_TYPE_ASYNC,
@@ -242,7 +247,7 @@ LIBIMOBILEDEVICE_API instproxy_error_t instproxy_client_new(idevice_t device, lo
 	instproxy_client_t client_loc = (instproxy_client_t) malloc(sizeof(struct instproxy_client_private));
 	client_loc->parent = plistclient;
 	mutex_init(&client_loc->mutex);
-	client_loc->receive_status_thread = THREAD_T_NULL;
+	client_loc->receive_status_thread = (thread_t)NULL;
 
 	*client = client_loc;
 	return INSTPROXY_E_SUCCESS;
@@ -260,15 +265,14 @@ LIBIMOBILEDEVICE_API instproxy_error_t instproxy_client_free(instproxy_client_t 
 	if (!client)
 		return INSTPROXY_E_INVALID_ARG;
 
-	property_list_service_client_t parent = client->parent;
+	property_list_service_client_free(client->parent);
 	client->parent = NULL;
 	if (client->receive_status_thread) {
 		debug_info("joining receive_status_thread");
 		thread_join(client->receive_status_thread);
 		thread_free(client->receive_status_thread);
-		client->receive_status_thread = THREAD_T_NULL;
+		client->receive_status_thread = (thread_t)NULL;
 	}
-	property_list_service_client_free(parent);
 	mutex_destroy(&client->mutex);
 	free(client);
 
@@ -286,7 +290,7 @@ LIBIMOBILEDEVICE_API instproxy_error_t instproxy_client_free(instproxy_client_t 
  * @param package_path The installation package path or NULL if not required.
  *
  * @return INSTPROXY_E_SUCCESS on success or an INSTPROXY_E_* error value if
- *     an error occurred.
+ *     an error occured.
  */
 static instproxy_error_t instproxy_send_command(instproxy_client_t client, plist_t command)
 {
@@ -346,7 +350,7 @@ static instproxy_error_t instproxy_receive_status_loop(instproxy_client_t client
 
 		/* parse status response */
 		if (node) {
-			/* check status for possible error to allow reporting it and aborting it gracefully */
+			/* check status for possible error to allow reporting it and aborting it gracefully */
 			res = instproxy_status_get_error(node, &error_name, &error_description, &error_code);
 			if (res != INSTPROXY_E_SUCCESS) {
 				debug_info("command: %s, error %d, code 0x%08"PRIx64", name: %s, description: \"%s\"", command_name, res, error_code, error_name, error_description ? error_description: "N/A");
@@ -434,7 +438,7 @@ static void* instproxy_receive_status_loop_thread(void* arg)
 
 	if (data->client->receive_status_thread) {
 		thread_free(data->client->receive_status_thread);
-		data->client->receive_status_thread = THREAD_T_NULL;
+		data->client->receive_status_thread = (thread_t)NULL;
 	}
 
 	instproxy_unlock(data->client);
@@ -460,7 +464,7 @@ static void* instproxy_receive_status_loop_thread(void* arg)
  *
  * @return INSTPROXY_E_SUCCESS when the thread was created (async mode), or
  *         when the command completed successfully (sync).
- *         An INSTPROXY_E_* error value is returned if an error occurred.
+ *         An INSTPROXY_E_* error value is returned if an error occured.
  */
 static instproxy_error_t instproxy_receive_status_loop_with_callback(instproxy_client_t client, plist_t command, instproxy_command_type_t async, instproxy_status_cb_t status_cb, void *user_data)
 {
@@ -505,7 +509,7 @@ static instproxy_error_t instproxy_receive_status_loop_with_callback(instproxy_c
  * @param user_data Callback data passed to status_cb.
  *
  * @return INSTPROXY_E_SUCCESS on success or an INSTPROXY_E_* error value if
- *     an error occurred.
+ *     an error occured.
  */
 static instproxy_error_t instproxy_perform_command(instproxy_client_t client, plist_t command, instproxy_command_type_t async, instproxy_status_cb_t status_cb, void *user_data)
 {

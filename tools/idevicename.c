@@ -23,11 +23,12 @@
 #include <config.h>
 #endif
 
+#ifdef _MSC_VER
+#include <config_msvc.h>
+#endif
+
 #include <stdio.h>
 #include <string.h>
-#ifndef _MSC_VER
-#include <unistd.h>
-#endif
 #include <stdlib.h>
 #include <getopt.h>
 

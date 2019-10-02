@@ -53,8 +53,8 @@ typedef enum {
 	IDEVICE_E_UNKNOWN_ERROR   = -2,
 	IDEVICE_E_NO_DEVICE       = -3,
 	IDEVICE_E_NOT_ENOUGH_DATA = -4,
-	IDEVICE_E_SSL_ERROR       = -6,
-	IDEVICE_E_TIMEOUT         = -7
+	IDEVICE_E_BAD_HEADER      = -5,
+	IDEVICE_E_SSL_ERROR       = -6
 } idevice_error_t;
 
 typedef struct idevice_private idevice_private;
@@ -83,7 +83,7 @@ enum idevice_socket_type {
 };
 
 /* event data structure */
-/** Provides information about the occurred event. */
+/** Provides information about the occured event. */
 typedef struct {
 	enum idevice_event_type event; /**< The event type. */
 	const char *udid; /**< The device unique id. */
@@ -95,7 +95,7 @@ typedef struct {
 typedef void (*idevice_event_cb_t) (const idevice_event_t *event, void *user_data);
 
 /** Enables calling applications to capture debug messages from libimobiledevice */
-typedef void(*idevice_debug_cb_t) (char *message);
+typedef void(*idevice_debug_cb_t) (const char *message);
 
 /* functions */
 
@@ -124,7 +124,7 @@ LIBIMOBILEDEVICE_API_MSC void idevice_set_debug_level(int level);
  * @param user_data Application-specific data passed as parameter
  *   to the registered callback function.
  *
- * @return IDEVICE_E_SUCCESS on success or an error value when an error occurred.
+ * @return IDEVICE_E_SUCCESS on success or an error value when an error occured.
  */
 LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_event_subscribe(idevice_event_cb_t callback, void *user_data);
 
@@ -132,7 +132,7 @@ LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_event_subscribe(idevice_event_c
  * Release the event callback function that has been registered with
  *  idevice_event_subscribe().
  *
- * @return IDEVICE_E_SUCCESS on success or an error value when an error occurred.
+ * @return IDEVICE_E_SUCCESS on success or an error value when an error occured.
  */
 LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_event_unsubscribe(void);
 
@@ -145,7 +145,7 @@ LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_event_unsubscribe(void);
  *   This list is terminated by a NULL pointer.
  * @param count Number of devices found.
  *
- * @return IDEVICE_E_SUCCESS on success or an error value when an error occurred.
+ * @return IDEVICE_E_SUCCESS on success or an error value when an error occured.
  */
 LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_get_device_list(char ***devices, int *count);
 

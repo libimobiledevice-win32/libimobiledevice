@@ -28,7 +28,7 @@
 
 struct syslog_relay_client_private {
 	service_client_t parent;
-	THREAD_T worker;
+	thread_t worker;
 };
 
 void *syslog_relay_worker(void *arg);
