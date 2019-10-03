@@ -192,7 +192,7 @@ LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_device_list_free(char **devices
  *
  * @return IDEVICE_E_SUCCESS on success or an error value when an error occurred.
  */
-idevice_error_t idevice_get_device_list_extended(idevice_info_t **devices, int *count);
+LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_get_device_list_extended(idevice_info_t **devices, int *count);
 
 /**
  * Free an extended device list retrieved through idevice_get_device_list_extended().
@@ -201,7 +201,7 @@ idevice_error_t idevice_get_device_list_extended(idevice_info_t **devices, int *
  *
  * @return IDEVICE_E_SUCCESS on success or an error value when an error occurred.
  */
-idevice_error_t idevice_device_list_extended_free(idevice_info_t *devices);
+LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_device_list_extended_free(idevice_info_t *devices);
 
 /* device structure creation and destruction */
 
@@ -245,7 +245,7 @@ LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_new(idevice_t *device, const ch
  *
  * @return IDEVICE_E_SUCCESS if ok, otherwise an error code.
  */
-idevice_error_t idevice_new_with_options(idevice_t *device, const char *udid, enum idevice_options options);
+LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_new_with_options(idevice_t *device, const char *udid, enum idevice_options options);
 
 /**
  * Cleans up an idevice structure, then frees the structure itself.
@@ -357,7 +357,7 @@ LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_connection_disable_ssl(idevice_
  *     is NULL. This function also returns IDEVICE_E_SUCCESS when SSL is not
  *     enabled and does no further error checking on cleanup.
  */
-idevice_error_t idevice_connection_disable_bypass_ssl(idevice_connection_t connection, uint8_t sslBypass);
+LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_connection_disable_bypass_ssl(idevice_connection_t connection, uint8_t sslBypass);
 
 
 /**

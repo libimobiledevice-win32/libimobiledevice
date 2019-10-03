@@ -472,7 +472,7 @@ LIBIMOBILEDEVICE_API_MSC lockdownd_error_t lockdownd_service_descriptor_free(loc
  *
  * @returns A readable error string
  */
-const char* lockdownd_strerror(lockdownd_error_t err);
+LIBIMOBILEDEVICE_API_MSC const char* lockdownd_strerror(lockdownd_error_t err);
 
 #ifdef __cplusplus
 }

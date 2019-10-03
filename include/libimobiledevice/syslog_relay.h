@@ -128,7 +128,7 @@ LIBIMOBILEDEVICE_API_MSC syslog_relay_error_t syslog_relay_start_capture(syslog_
  *      invalid or SYSLOG_RELAY_E_UNKNOWN_ERROR when an unspecified
  *      error occurs or a syslog capture has already been started.
  */
-syslog_relay_error_t syslog_relay_start_capture_raw(syslog_relay_client_t client, syslog_relay_receive_cb_t callback, void* user_data);
+LIBIMOBILEDEVICE_API_MSC syslog_relay_error_t syslog_relay_start_capture_raw(syslog_relay_client_t client, syslog_relay_receive_cb_t callback, void* user_data);
 
 /**
  * Stops capturing the syslog of the device.

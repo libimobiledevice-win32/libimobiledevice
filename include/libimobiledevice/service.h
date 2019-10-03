@@ -177,7 +177,7 @@ LIBIMOBILEDEVICE_API_MSC service_error_t service_disable_ssl(service_client_t cl
  *     SERVICE_E_INVALID_ARG if client or client->connection is
  *     NULL, or SERVICE_E_UNKNOWN_ERROR otherwise.
  */
-service_error_t service_disable_bypass_ssl(service_client_t client, uint8_t sslBypass);
+LIBIMOBILEDEVICE_API_MSC service_error_t service_disable_bypass_ssl(service_client_t client, uint8_t sslBypass);
 
 #ifdef __cplusplus
 }
