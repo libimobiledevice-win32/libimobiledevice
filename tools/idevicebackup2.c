@@ -190,8 +190,13 @@ static void mobilebackup_afc_get_file_contents(afc_client_t afc, const char *fil
 static int __mkdir(const char* path, int mode)
 {
 #ifdef WIN32
-	return CreateDirectory(path, NULL);
+	// CreateDirectory returns a non-zero value on success,
+	// and zero on failure
+	// https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createdirectorya
+	return CreateDirectory(path, NULL) == 0;
 #else
+	// mkdir returns zero on success, and an error code on failure
+	// https://linux.die.net/man/2/mkdir
 	return mkdir(path, mode);
 #endif
 }
