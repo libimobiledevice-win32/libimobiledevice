@@ -357,7 +357,7 @@ LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_connection_disable_ssl(idevice_
  *     is NULL. This function also returns IDEVICE_E_SUCCESS when SSL is not
  *     enabled and does no further error checking on cleanup.
  */
-idevice_error_t idevice_connection_disable_bypass_ssl(idevice_connection_t connection, uint8_t sslBypass);
+LIBIMOBILEDEVICE_API_MSC idevice_error_t idevice_connection_disable_bypass_ssl(idevice_connection_t connection, uint8_t sslBypass);
 
 
 /**
