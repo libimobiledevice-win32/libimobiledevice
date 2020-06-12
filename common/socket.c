@@ -322,7 +322,7 @@ int socket_create(uint16_t port)
 	return sfd;
 }
 
-#ifdef AF_INET6
+#if defined(AF_INET6) && !defined(_MSC_VER)
 static uint32_t _in6_addr_scope(struct in6_addr* addr)
 {
 	uint32_t scope = 0;
@@ -464,7 +464,7 @@ int socket_connect_addr(struct sockaddr* addr, uint16_t port)
 		addr_in->sin_port = htons(port);
 		addrlen = sizeof(struct sockaddr_in);
 	}
-#ifdef AF_INET6
+#if defined(AF_INET6) && !defined(_MSC_VER)
 	else if (addr->sa_family == AF_INET6) {
 		struct sockaddr_in6* addr_in = (struct sockaddr_in6*)addr;
 		addr_in->sin6_port = htons(port);
